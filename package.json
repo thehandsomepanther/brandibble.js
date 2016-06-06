@@ -1,7 +1,8 @@
 {
   "name": "brandibble.js",
   "version": "1.0.0",
-  "description": "",
+  "description": "API Wrapper for Brandibble.co",
+  "repository": "https://github.com/sanctuarycomputer/brandibble.js",
   "main": "dist/Brandibble.js",
   "scripts": {
     "build": "weback",
