@@ -644,12 +644,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }).then(handleResponse);
 	    }
 	  }, {
-	    key: 'getCustomerId',
-	    value: function getCustomerId() {
-	      // TODO: This seems basic
-	      return atob(this.customerToken.split('.')[1]).customer_id;
-	    }
-	  }, {
 	    key: 'headers',
 	    value: function headers() {
 	      var headers = { 'Brandibble-Api-Key': this.apiKey, 'Content-Type': 'application/json' };
