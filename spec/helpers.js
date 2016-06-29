@@ -1,10 +1,17 @@
 import Brandibble from '..';
 
+export const TestingUser = {
+  first_name: 'Sanctuary',
+  last_name: 'Testing',
+  email: 'sanctuary-testing-customer@example.com',
+  password: 'password'
+};
+
 export function seedEmail() {
   return `sanctuary-testing-${(new Date()).valueOf().toString()}@example.com`;
 }
 
-export const UnsecureApiKey = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ5ODEzNTc2NiwiaWF0IjoxNDY2NTk5NzY2fQ.eyJlbWFpbCI6Imh1Z2hAc2FuY3R1YXJ5LmNvbSIsImRvbWFpbiI6Imh0dHBzOi8vc2FuY3R1YXJ5LmNvbXB1dGVyIiwiYXBpX3VzZXJfaWQiOjEsIm5hbWUiOiJTYW5jdHVhcnkifQ.ZiQdEYSawYF7v-ZO2dkOzY4WnMFIf67GScYfsxab-vw';
+export const UnsecureApiKey = '***REMOVED***';
 
 export function seedText() {
   return `Testing ${(new Date()).valueOf().toString()}`;
