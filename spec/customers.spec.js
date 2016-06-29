@@ -34,7 +34,7 @@ describe('Customers', () => {
       let errors = shouldError(response);
       expect(errors).to.be.a('array').to.have.lengthOf(2);
       expect(errors[0]).to.have.property('code', 'customers.create.validation');
-      expect(errors[1]).to.have.property('title', 'Not a valid email address.')
+      expect(errors[1]).to.have.property('title', 'Please submit a valid email address.')
       done();
     });
   });
@@ -56,8 +56,8 @@ describe('Customers', () => {
       password: 'nope'
     }).catch(response => {
       let errors = shouldError(response);
-      expect(errors).to.be.a('array').to.have.lengthOf(1);
-      expect(errors[0]).to.have.property('code', 'customers.validate.incorrect_password');
+      expect(errors).to.be.a('array').to.have.lengthOf(2);
+      expect(errors[0]).to.have.property('code', 'customers.login.validation');
       done();
     });
   });
@@ -74,11 +74,11 @@ describe('Customers', () => {
       expect(BrandibbleRef.adapter.customerToken).to.be.a('string');
       let localStorageData = retrieve(BrandibbleRef.adapter.localStorageKey);
       expect(localStorageData.customerToken).to.be.a('string', BrandibbleRef.adapter.customerToken);
-      
+
       // New Refs should automatically restore the customer token (for page refresh)
       let OtherBrandibbleRef = buildRef();
       expect(OtherBrandibbleRef.adapter.customerToken).to.be.a('string', BrandibbleRef.adapter.customerToken);
-      
+
       BrandibbleRef.customers.invalidate().then(() => {
         expect(BrandibbleRef.adapter.customerToken).to.not.exist;
         let localStorageData = retrieve(BrandibbleRef.adapter.localStorageKey);
@@ -91,12 +91,12 @@ describe('Customers', () => {
   /* TODO: This should not require a customer-token, waiting on JC
   it('can validate a customers metadata', done => {
     BrandibbleRef.customers.validateCustomer({ email: 'sanctuary-testing-customer@example.com' }).then(response => {
-      debugger; 
+      debugger;
       done();
     });
   });
   */
-  
+
   it('can trigger a customers reset password flow', done => {
     BrandibbleRef.customers.resetPassword({ email: "sanctuary-testing-customer@example.com" }).then(response => {
       expect(response).to.be.true;
@@ -125,7 +125,7 @@ describe('Customers', () => {
     }).then(response => {
       let newLastName = seedText();
       BrandibbleRef.customers.updateCurrent({
-        last_name: newLastName 
+        last_name: newLastName
       }).then(response => {
         let data = shouldSucceed(response);
         expect(data.last_name).to.be.a('string', newLastName);
