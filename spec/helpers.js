@@ -21,7 +21,7 @@ export function buildRef() {
   return new Brandibble({
     apiKey: UnsecureApiKey,
     brandId: 6,
-    apiEndpoint: 'http://unsecure.brandibble.co/api/'
+    apiEndpoint: 'https://staging.brandibble.co/api/'
   });
 }
 
