@@ -515,17 +515,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _customers2 = _interopRequireDefault(_customers);
 
-	var _Locations = __webpack_require__(11);
+	var _locations = __webpack_require__(11);
 
-	var _Locations2 = _interopRequireDefault(_Locations);
+	var _locations2 = _interopRequireDefault(_locations);
 
 	var _addresses = __webpack_require__(12);
 
 	var _addresses2 = _interopRequireDefault(_addresses);
 
+	var _menus = __webpack_require__(13);
+
+	var _menus2 = _interopRequireDefault(_menus);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	// ISOString Polyfill
+	if (!Date.prototype.toISOString) {
+	  (function () {
+	    function pad(number) {
+	      if (number < 10) {
+	        return '0' + number;
+	      }
+	      return number;
+	    }
+
+	    Date.prototype.toISOString = function () {
+	      return this.getUTCFullYear() + '-' + pad(this.getUTCMonth() + 1) + '-' + pad(this.getUTCDate()) + 'T' + pad(this.getUTCHours()) + ':' + pad(this.getUTCMinutes()) + ':' + pad(this.getUTCSeconds()) + '.' + (this.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) + 'Z';
+	    };
+	  })();
+	}
 
 	var Brandibble = function Brandibble(_ref) {
 	  var apiKey = _ref.apiKey;
@@ -552,8 +572,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /* Build Resources */
 	  this.customers = new _customers2.default(this.adapter);
-	  this.locations = new _Locations2.default(this.adapter);
+	  this.locations = new _locations2.default(this.adapter);
 	  this.addresses = new _addresses2.default(this.adapter);
+	  this.menus = new _menus2.default(this.adapter);
 	};
 
 	exports.default = Brandibble;
@@ -1963,11 +1984,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function index() {
 	      return this.adapter.request('GET', 'locations');
 	    }
-	  }, {
-	    key: 'menu',
-	    value: function menu(locationId) {
-	      return this.adapter.request('GET', 'locations/' + locationId + '/menu');
-	    }
 	  }]);
 
 	  return Locations;
@@ -2012,6 +2028,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	}();
 
 	exports.default = Addresses;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Menus = function () {
+	  function Menus(adapter) {
+	    _classCallCheck(this, Menus);
+
+	    this.adapter = adapter;
+	  }
+
+	  _createClass(Menus, [{
+	    key: 'build',
+	    value: function build(location_id) {
+	      var service_type = arguments.length <= 1 || arguments[1] === undefined ? 'delivery' : arguments[1];
+
+	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
+	      return this.adapter.request('POST', '/menus', { location_id: location_id, service_type: service_type, requested_at: requested_at });
+	    }
+	  }]);
+
+	  return Menus;
+	}();
+
+	exports.default = Menus;
 
 /***/ }
 /******/ ])

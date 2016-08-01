@@ -10,7 +10,7 @@ describe('Brandibble', () => {
     expect(BrandibbleRef).to.have.property('adapter');
     let adapter = BrandibbleRef.adapter;
     expect(adapter).to.have.property('apiKey', UnsecureApiKey);
-    expect(adapter).to.have.property('apiBase', 'http://unsecure.brandibble.co/api/v1/brands/6/');
+    expect(adapter).to.have.property('apiBase', 'https://staging.brandibble.co/api/v1/brands/6/');
   });
 });
 
