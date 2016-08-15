@@ -85,7 +85,7 @@ All Address Methods are dependent on the authenticated customer (stateful).
 *Stateful Methods*
 
   - `Brandibble.addresses.all()`
-  - `Brandibble.create(AddressObject)`
+  - `Brandibble.addresses.create(AddressObject)`
 
       Your address object should look something like this:
 
@@ -107,4 +107,35 @@ All Address Methods are dependent on the authenticated customer (stateful).
 ##### Locations
 
   - `Brandibble.locations.index()`
-  - `Brandibble.locations.menu(locationId)`
+
+      TODO: Menus
+
+##### Orders
+
+Due to the complexity of formatting data for the Orders endpoint, Brandibble.js provides an
+`Order` constructor, that can be used as such:
+
+```js
+let newOrder = new BrandibbleRef.Order(location, 'pickup');
+let lineItem = newOrder.addLineItem(product, 1);
+
+newOrder.isValid(); // false
+lineItem.isValid(); // false
+lineItem.errors(); // ['option_group_too_few:62', 'option_group_too_few:63']
+
+lineItem.addOption(product.bases, product.bases[2]);
+lineItem.addOption(product.sites, product.sides[2]);
+
+lineItem.isValid() // true
+
+BrandibbleRef.orders.validate(newOrder);
+```
+
+TODO:
+  - Test Models
+  - Test Placing an Order
+  - Write readme about using models
+  - Restore Orders from LocalStorage
+
+  - `Brandibble.orders.validate(BrandibbleOrderModel)`
+  - `Brandibble.orders.submit(BrandibbleOrderModel)`
