@@ -1,5 +1,5 @@
 import { buildRef } from './../helpers';
-import productJSON from './../product.stubs';
+import productJSON from './../product.stub';
 let Brandibble = buildRef();
 
 describe('LineItem', () => {
