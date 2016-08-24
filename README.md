@@ -123,6 +123,8 @@ newOrder.isValid(); // false
 lineItem.isValid(); // false
 lineItem.errors(); // error details, formatted as an array
 
+let bases = lineItem.optionGroups()[0];
+
 // Configure Line Item
 lineItem.addOption(bases, bases.option_items[2]);
 lineItem.removeOption(bases, bases.option_items[2]);
