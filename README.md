@@ -128,6 +128,8 @@ lineItem.addOption(bases, bases.option_items[2]);
 lineItem.removeOption(bases, bases.option_items[2]);
 lineItem.addOption(bases, bases.option_items[1]);
 
+lineItem.setLineItemQuantity(lineItem, 7);
+
 lineItem.isValid() // true
 newOrder.isValid() // true
 
