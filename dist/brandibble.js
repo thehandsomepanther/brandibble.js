@@ -2196,10 +2196,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.cart = new _Cart2.default();
 	    this.location = location;
 	    this.serviceType = serviceType;
-	    this.miscOptions = defaultOptions;
+	    this.miscOptions = miscOptions;
 	  }
 
 	  _createClass(Order, [{
+	    key: "isValid",
+	    value: function isValid() {
+	      return this.cart.isValid();
+	    }
+	  }, {
+	    key: "addLineItem",
+	    value: function addLineItem() {
+	      var _cart;
+
+	      return (_cart = this.cart).addLineItem.apply(_cart, arguments);
+	    }
+	  }, {
+	    key: "getLineItemQuantity",
+	    value: function getLineItemQuantity() {
+	      var _cart2;
+
+	      return (_cart2 = this.cart).getLineItemQuantity.apply(_cart2, arguments);
+	    }
+	  }, {
+	    key: "setLineItemQuantity",
+	    value: function setLineItemQuantity() {
+	      var _cart3;
+
+	      return (_cart3 = this.cart).setLineItemQuantity.apply(_cart3, arguments);
+	    }
+	  }, {
+	    key: "removeLineItem",
+	    value: function removeLineItem() {
+	      var _cart4;
+
+	      return (_cart4 = this.cart).removeLineItem.apply(_cart4, arguments);
+	    }
+	  }, {
 	    key: "format",
 	    value: function format() {
 	      return {
@@ -2261,6 +2294,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var lineItem = new _LineItem2.default(product, quantity);
 	      this.lineItems.push(lineItem);
 	      return lineItem;
+	    }
+	  }, {
+	    key: 'getLineItemQuantity',
+	    value: function getLineItemQuantity(lineItem) {
+	      var match = _lodash2.default.find(this.lineItems, function (li) {
+	        return _lodash2.default.isEqual(li, lineItem);
+	      });
+	      if (match) {
+	        return match.quantity;
+	      }
+	      return 0;
+	    }
+	  }, {
+	    key: 'setLineItemQuantity',
+	    value: function setLineItemQuantity(lineItem) {
+	      var quantity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+
+	      var match = _lodash2.default.find(this.lineItems, function (li) {
+	        return _lodash2.default.isEqual(li, lineItem);
+	      });
+	      if (match) {
+	        match.quantity = quantity;return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'removeLineItem',
+	    value: function removeLineItem(lineItem) {
+	      this.lineItems = _lodash2.default.filter(this.lineItems, function (li) {
+	        return _lodash2.default.isEqual(li, lineItem);
+	      });
+	      return this.lineItems;
 	    }
 	  }, {
 	    key: 'format',
