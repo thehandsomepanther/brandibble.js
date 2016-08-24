@@ -26,8 +26,8 @@ describe('Orders', () => {
         expect(lineItem.isValid()).to.equal(false);
         expect(newOrder.cart.isValid()).to.equal(false);
 
-        let bases = lineItem.product.option_groups[0];
-        let sides = lineItem.product.option_groups[1];
+        let bases = lineItem.optionGroups()[0];
+        let sides = lineItem.optionGroups()[1];
 
         lineItem.addOption(bases, bases.option_items[0])
         lineItem.addOption(sides, sides.option_items[0])
@@ -39,7 +39,7 @@ describe('Orders', () => {
           let data = shouldSucceed(response);
           expect(data).to.be.a('object');
           done();
-        });
+        }).catch(error => console.log(error));
       });
     });
   });

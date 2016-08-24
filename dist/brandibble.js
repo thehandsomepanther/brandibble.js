@@ -507,7 +507,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
-	var _adapter = __webpack_require__(3);
+	var _utils = __webpack_require__(3);
+
+	var _adapter = __webpack_require__(9);
 
 	var _adapter2 = _interopRequireDefault(_adapter);
 
@@ -531,37 +533,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _orders2 = _interopRequireDefault(_orders);
 
-	var _order = __webpack_require__(15);
+	var _Order = __webpack_require__(15);
 
-	var _order2 = _interopRequireDefault(_order);
+	var _Order2 = _interopRequireDefault(_Order);
 
-	var _cart = __webpack_require__(16);
+	var _LineItem = __webpack_require__(18);
 
-	var _cart2 = _interopRequireDefault(_cart);
-
-	var _lineItem = __webpack_require__(18);
-
-	var _lineItem2 = _interopRequireDefault(_lineItem);
+	var _LineItem2 = _interopRequireDefault(_LineItem);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	// ISOString Polyfill
-	if (!Date.prototype.toISOString) {
-	  (function () {
-	    function pad(number) {
-	      if (number < 10) {
-	        return '0' + number;
-	      }
-	      return number;
-	    }
-
-	    Date.prototype.toISOString = function () {
-	      return this.getUTCFullYear() + '-' + pad(this.getUTCMonth() + 1) + '-' + pad(this.getUTCDate()) + 'T' + pad(this.getUTCHours()) + ':' + pad(this.getUTCMinutes()) + ':' + pad(this.getUTCSeconds()) + '.' + (this.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) + 'Z';
-	    };
-	  })();
-	}
+	(0, _utils.applyPollyfills)();
 
 	var Brandibble = function Brandibble(_ref) {
 	  var apiKey = _ref.apiKey;
@@ -587,8 +571,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.adapter = new _adapter2.default({ apiKey: apiKey, apiBase: apiBase });
 
 	  /* Export Models */
-	  this.Order = _order2.default;
-	  this.LineItem = _lineItem2.default;
+	  this.Order = _Order2.default;
+	  this.LineItem = _LineItem2.default;
 
 	  /* Build Resources */
 	  this.customers = new _customers2.default(this.adapter);
@@ -609,117 +593,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.applyPollyfills = applyPollyfills;
+	exports.persist = persist;
+	exports.retrieve = retrieve;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _utils = __webpack_require__(4);
-
-	var _es6Promise = __webpack_require__(5);
+	var _es6Promise = __webpack_require__(4);
 
 	var _es6Promise2 = _interopRequireDefault(_es6Promise);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	if (typeof Promise === 'undefined') {
-	  (0, _es6Promise2.default)();
-	}
-
-	function handleResponse(response) {
-	  var status = response.status;
-	  var statusText = response.statusText;
-
-	  if (status >= 200 && status < 300) {
-	    if (statusText === 'NO CONTENT') {
-	      return true;
-	    }
-	    return response.json();
-	  }
-	  return response.json().then(function (error) {
-	    throw error;
-	  });
-	}
-
-	var LOCAL_STORAGE_KEY = 'brandibble';
-
-	var Adapter = function () {
-	  function Adapter(_ref) {
-	    var apiKey = _ref.apiKey;
-	    var apiBase = _ref.apiBase;
-
-	    _classCallCheck(this, Adapter);
-
-	    this.apiKey = apiKey;
-	    this.apiBase = apiBase;
-	    this.localStorageKey = LOCAL_STORAGE_KEY;
-	    this.restoreCustomerToken();
-	  }
-
-	  _createClass(Adapter, [{
-	    key: 'customerId',
-	    value: function customerId() {
-	      try {
-	        return JSON.parse(atob(this.customerToken.split('.')[1])).customer_id;
-	      } catch (e) {
-	        return 0;
-	      }
-	    }
-	  }, {
-	    key: 'restoreCustomerToken',
-	    value: function restoreCustomerToken() {
-	      var data = (0, _utils.retrieve)(this.localStorageKey);
-	      this.customerToken = data.customerToken;
-	    }
-	  }, {
-	    key: 'persistCustomerToken',
-	    value: function persistCustomerToken(customerToken) {
-	      this.customerToken = customerToken;
-	      (0, _utils.persist)(this.localStorageKey, { customerToken: customerToken });
-	    }
-	  }, {
-	    key: 'flushCustomerToken',
-	    value: function flushCustomerToken() {
-	      this.customerToken = null;
-	      (0, _utils.persist)(this.localStorageKey, { customerToken: null });
-	    }
-	  }, {
-	    key: 'request',
-	    value: function request(method, path, body) {
-	      return fetch('' + this.apiBase + path, {
-	        method: method,
-	        headers: this.headers(),
-	        body: body ? JSON.stringify(body) : null,
-	        credentials: 'omit'
-	      }).then(handleResponse);
-	    }
-	  }, {
-	    key: 'headers',
-	    value: function headers() {
-	      var headers = { 'Brandibble-Api-Key': this.apiKey, 'Content-Type': 'application/json' };
-	      if (this.customerToken) {
-	        headers['Brandibble-Customer-Token'] = this.customerToken;
-	      }
-	      return headers;
-	    }
-	  }]);
-
-	  return Adapter;
-	}();
-
-	exports.default = Adapter;
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.persist = persist;
-	exports.retrieve = retrieve;
 	function localStoragePresent() {
 	  var test = 'test';
 	  try {
@@ -728,6 +611,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return true;
 	  } catch (e) {
 	    return false;
+	  }
+	}
+
+	function pad(number) {
+	  if (number < 10) {
+	    return '0' + number;
+	  }
+	  return number;
+	}
+
+	function applyPollyfills() {
+	  if (typeof Promise === 'undefined') {
+	    (0, _es6Promise2.default)();
+	  }
+
+	  if (!Date.prototype.toISOString) {
+	    Date.prototype.toISOString = function () {
+	      return this.getUTCFullYear() + '-' + pad(this.getUTCMonth() + 1) + '-' + pad(this.getUTCDate()) + 'T' + pad(this.getUTCHours()) + ':' + pad(this.getUTCMinutes()) + ':' + pad(this.getUTCSeconds()) + '.' + (this.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) + 'Z';
+	    };
+	  }
+
+	  if (typeof Object.assign != 'function') {
+	    Object.assign = function (target) {
+	      'use strict';
+
+	      if (target == null) {
+	        throw new TypeError('Cannot convert undefined or null to object');
+	      }
+
+	      target = Object(target);
+	      for (var index = 1; index < arguments.length; index++) {
+	        var source = arguments[index];
+	        if (source != null) {
+	          for (var key in source) {
+	            if (Object.prototype.hasOwnProperty.call(source, key)) {
+	              target[key] = source[key];
+	            }
+	          }
+	        }
+	      }
+	      return target;
+	    };
 	  }
 	}
 
@@ -742,7 +667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    localStorage.setItem(namespace, JSON.stringify(allData || {}));
 	    return data;
 	  } else {
-	    // TODO: Safari Private Browsing
+	    console.warn('Brandibble.js: Local Storage is not availble,\n        and therefore the client can\'t persist information over page refresh.');
 	  }
 	}
 
@@ -751,36 +676,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var data = localStorage.getItem(namespace);
 	    return JSON.parse(data || "{}");
 	  } else {
-	    // TODO: Safari Private Browsing
+	    console.warn('Brandibble.js: Local Storage is not availble,\n        and therefore the client can\'t retrieve information over page refresh.');
 	  }
 	}
 
-	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
-	if (typeof Object.assign != 'function') {
-	  Object.assign = function (target) {
-	    'use strict';
-
-	    if (target == null) {
-	      throw new TypeError('Cannot convert undefined or null to object');
-	    }
-
-	    target = Object(target);
-	    for (var index = 1; index < arguments.length; index++) {
-	      var source = arguments[index];
-	      if (source != null) {
-	        for (var key in source) {
-	          if (Object.prototype.hasOwnProperty.call(source, key)) {
-	            target[key] = source[key];
-	          }
-	        }
-	      }
-	    }
-	    return target;
-	  };
-	}
-
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, global, module) {/*!
@@ -913,7 +814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function lib$es6$promise$asap$$attemptVertx() {
 	      try {
 	        var r = require;
-	        var vertx = __webpack_require__(8);
+	        var vertx = __webpack_require__(7);
 	        lib$es6$promise$asap$$vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	        return lib$es6$promise$asap$$useVertxTimer();
 	      } catch(e) {
@@ -1731,7 +1632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    /* global define:true module:true window: true */
-	    if ("function" === 'function' && __webpack_require__(9)['amd']) {
+	    if ("function" === 'function' && __webpack_require__(8)['amd']) {
 	      !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return lib$es6$promise$umd$$ES6Promise; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof module !== 'undefined' && module['exports']) {
 	      module['exports'] = lib$es6$promise$umd$$ES6Promise;
@@ -1743,10 +1644,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}).call(this);
 
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), (function() { return this; }()), __webpack_require__(7)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), (function() { return this; }()), __webpack_require__(6)(module)))
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -1846,7 +1747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -1862,17 +1763,127 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _utils = __webpack_require__(3);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var FiveHundredError = {
+	  errors: [{
+	    code: "errors.server.internal",
+	    title: "Internal Server Error",
+	    status: 500
+	  }]
+	};
+
+	function handleResponse(response) {
+	  var status = response.status;
+	  var statusText = response.statusText;
+
+	  if (status >= 200 && status < 300) {
+	    if (statusText === 'NO CONTENT') {
+	      return true;
+	    }
+	    return response.json();
+	  }
+	  if (status === 500) {
+	    throw FiveHundredError;
+	  }
+	  return response.json().then(function (error) {
+	    throw error;
+	  });
+	}
+
+	var LOCAL_STORAGE_KEY = 'brandibble';
+
+	var Adapter = function () {
+	  function Adapter(_ref) {
+	    var apiKey = _ref.apiKey;
+	    var apiBase = _ref.apiBase;
+
+	    _classCallCheck(this, Adapter);
+
+	    this.apiKey = apiKey;
+	    this.apiBase = apiBase;
+	    this.localStorageKey = LOCAL_STORAGE_KEY;
+	    this.restoreCustomerToken();
+	  }
+
+	  _createClass(Adapter, [{
+	    key: "customerId",
+	    value: function customerId() {
+	      try {
+	        return JSON.parse(atob(this.customerToken.split('.')[1])).customer_id;
+	      } catch (e) {
+	        return 0;
+	      }
+	    }
+	  }, {
+	    key: "restoreCustomerToken",
+	    value: function restoreCustomerToken() {
+	      var data = (0, _utils.retrieve)(this.localStorageKey);
+	      this.customerToken = data.customerToken;
+	    }
+	  }, {
+	    key: "persistCustomerToken",
+	    value: function persistCustomerToken(customerToken) {
+	      this.customerToken = customerToken;
+	      (0, _utils.persist)(this.localStorageKey, { customerToken: customerToken });
+	    }
+	  }, {
+	    key: "flushCustomerToken",
+	    value: function flushCustomerToken() {
+	      this.customerToken = null;
+	      (0, _utils.persist)(this.localStorageKey, { customerToken: null });
+	    }
+	  }, {
+	    key: "request",
+	    value: function request(method, path, body) {
+	      return fetch("" + this.apiBase + path, {
+	        method: method,
+	        headers: this.headers(),
+	        body: body ? JSON.stringify(body) : null,
+	        credentials: 'omit'
+	      }).then(handleResponse);
+	    }
+	  }, {
+	    key: "headers",
+	    value: function headers() {
+	      var headers = { 'Brandibble-Api-Key': this.apiKey, 'Content-Type': 'application/json' };
+	      if (this.customerToken) {
+	        headers['Brandibble-Customer-Token'] = this.customerToken;
+	      }
+	      return headers;
+	    }
+	  }]);
+
+	  return Adapter;
+	}();
+
+	exports.default = Adapter;
 
 /***/ },
 /* 10 */
@@ -2160,9 +2171,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _cart = __webpack_require__(16);
+	var _Cart = __webpack_require__(16);
 
-	var _cart2 = _interopRequireDefault(_cart);
+	var _Cart2 = _interopRequireDefault(_Cart);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2182,7 +2193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _classCallCheck(this, Order);
 
-	    this.cart = new _cart2.default();
+	    this.cart = new _Cart2.default();
 	    this.location = location;
 	    this.serviceType = serviceType;
 	    this.miscOptions = defaultOptions;
@@ -2220,9 +2231,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _lineItem = __webpack_require__(18);
+	var _LineItem = __webpack_require__(18);
 
-	var _lineItem2 = _interopRequireDefault(_lineItem);
+	var _LineItem2 = _interopRequireDefault(_LineItem);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2247,7 +2258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function addLineItem(product) {
 	      var quantity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-	      var lineItem = new _lineItem2.default(product, quantity);
+	      var lineItem = new _LineItem2.default(product, quantity);
 	      this.lineItems.push(lineItem);
 	      return lineItem;
 	    }
@@ -18877,7 +18888,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(7)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(6)(module)))
 
 /***/ },
 /* 18 */
@@ -18888,6 +18899,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -18913,9 +18926,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  _createClass(LineItem, [{
+	    key: 'configurationForGroup',
+	    value: function configurationForGroup(groupOrId) {
+	      var optionGroupId = (typeof groupOrId === 'undefined' ? 'undefined' : _typeof(groupOrId)) === "object" ? groupOrId.id : parseInt(groupOrId);
+	      return _lodash2.default.find(this.configuration, { optionGroupId: optionGroupId });
+	    }
+	  }, {
 	    key: 'addOption',
 	    value: function addOption(group, item) {
-	      // TODO: Check this is valid
+	      var groupConfig = this.configurationForGroup(group);
+	      var canAdd = group.max_options > (groupConfig ? groupConfigoptionItems.length : 0);
+
+	      if (!canAdd) {
+	        throw {
+	          error: 'Can not add another option for this group.',
+	          type: 'option_group',
+	          subject: group,
+	          relatedConfiguration: groupConfig
+	        };
+	      }
+
 	      var match = _lodash2.default.find(this.configuration, { optionGroupId: group.id });
 	      if (match) {
 	        match.optionItems.push(item);
@@ -18928,9 +18958,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return true;
 	    }
 	  }, {
+	    key: 'removeOption',
+	    value: function removeOption(item) {
+	      var groupConfig = this.configurationForGroup(item.group_id);
+	      if (groupConfig) {
+	        groupConfig.optionItems = _lodash2.default.filter(groupConfig.optionItems, function (oi) {
+	          return oi.id !== item.id;
+	        });
+	      }
+	      return groupConfig;
+	    }
+	  }, {
 	    key: 'isValid',
 	    value: function isValid() {
 	      return this.errors().length === 0;
+	    }
+	  }, {
+	    key: 'hasOptionGroups',
+	    value: function hasOptionGroups() {
+	      return this.optionGroups().length > 0;
+	    }
+	  }, {
+	    key: 'optionGroups',
+	    value: function optionGroups() {
+	      return this.product.option_groups || [];
 	    }
 	  }, {
 	    key: 'errors',
@@ -18942,10 +18993,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var match = _lodash2.default.find(_this.configuration, { optionGroupId: group.id });
 	        var count = match ? match.optionItems.length : 0;
 	        if (count < group.min_options) {
-	          return 'option_group_too_few:' + group.id;
+	          return {
+	            error: 'Too Few Options added for this Group.',
+	            subjectType: 'option_group',
+	            subject: group,
+	            relatedConfiguration: _this.configurationForGroup(group)
+	          };
 	        }
 	        if (count > group.max_options) {
-	          return 'option_group_too_many:' + group.id;
+	          return {
+	            error: 'Too Many Options added for this Group.',
+	            subjectType: 'option_group',
+	            subject: group,
+	            relatedConfiguration: _this.configurationForGroup(group)
+	          };
 	        }
 	      }).compact().value();
 	    }
@@ -18954,10 +19015,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function format() {
 	      return {
 	        id: this.product.id,
-	        //category_id: this.product.category_id,
 	        made_for: this.madeFor,
 	        instructions: this.instructions,
-	        //name: this.product.name,
 	        price: this.product.price,
 	        quantity: this.quantity,
 	        option_groups: _lodash2.default.map(this.configuration, function (g) {
@@ -18966,7 +19025,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            option_items: _lodash2.default.map(g.optionItems, function (oi) {
 	              return {
 	                id: oi.id,
-	                //name: oi.name,
 	                price: oi.price
 	              };
 	            })
