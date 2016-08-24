@@ -134,11 +134,7 @@ newOrder.isValid() // true
 BrandibbleRef.orders.validate(newOrder);
 ```
 
-TODO:
-  - Test Models
-  - Test Placing an Order
-  - Write readme about using models
-  - Restore Orders from LocalStorage
+There are only two methods that you can do on an Order:
 
-  - `Brandibble.orders.validate(BrandibbleOrderModel)`
-  - `Brandibble.orders.submit(BrandibbleOrderModel)`
+- `Brandibble.orders.validate(BrandibbleOrderModel)`
+- `Brandibble.orders.submit(BrandibbleOrderModel)`
