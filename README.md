@@ -121,12 +121,15 @@ let lineItem = newOrder.addLineItem(product, 1);
 
 newOrder.isValid(); // false
 lineItem.isValid(); // false
-lineItem.errors(); // ['option_group_too_few:62', 'option_group_too_few:63']
+lineItem.errors(); // error details, formatted as an array
 
-lineItem.addOption(product.bases, product.bases[2]);
-lineItem.addOption(product.sites, product.sides[2]);
+// Configure Line Item
+lineItem.addOption(bases, bases.option_items[2]);
+lineItem.removeOption(bases, bases.option_items[2]);
+lineItem.addOption(bases, bases.option_items[1]);
 
 lineItem.isValid() // true
+newOrder.isValid() // true
 
 BrandibbleRef.orders.validate(newOrder);
 ```
