@@ -533,13 +533,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _orders2 = _interopRequireDefault(_orders);
 
-	var _Order = __webpack_require__(15);
+	var _order = __webpack_require__(15);
 
-	var _Order2 = _interopRequireDefault(_Order);
+	var _order2 = _interopRequireDefault(_order);
 
-	var _LineItem = __webpack_require__(18);
+	var _lineItem = __webpack_require__(18);
 
-	var _LineItem2 = _interopRequireDefault(_LineItem);
+	var _lineItem2 = _interopRequireDefault(_lineItem);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -571,8 +571,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.adapter = new _adapter2.default({ apiKey: apiKey, apiBase: apiBase });
 
 	  /* Export Models */
-	  this.Order = _Order2.default;
-	  this.LineItem = _LineItem2.default;
+	  this.Order = _order2.default;
+	  this.LineItem = _lineItem2.default;
 
 	  /* Build Resources */
 	  this.customers = new _customers2.default(this.adapter);
@@ -2171,9 +2171,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _Cart = __webpack_require__(16);
+	var _cart5 = __webpack_require__(16);
 
-	var _Cart2 = _interopRequireDefault(_Cart);
+	var _cart6 = _interopRequireDefault(_cart5);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2193,7 +2193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _classCallCheck(this, Order);
 
-	    this.cart = new _Cart2.default();
+	    this.cart = new _cart6.default();
 	    this.location = location;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
@@ -2264,9 +2264,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _LineItem = __webpack_require__(18);
+	var _lineItem = __webpack_require__(18);
 
-	var _LineItem2 = _interopRequireDefault(_LineItem);
+	var _lineItem2 = _interopRequireDefault(_lineItem);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2291,7 +2291,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function addLineItem(product) {
 	      var quantity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-	      var lineItem = new _LineItem2.default(product, quantity);
+	      var lineItem = new _lineItem2.default(product, quantity);
 	      this.lineItems.push(lineItem);
 	      return lineItem;
 	    }
