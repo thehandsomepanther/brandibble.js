@@ -85,7 +85,7 @@ All Address Methods are dependent on the authenticated customer (stateful).
 *Stateful Methods*
 
   - `Brandibble.addresses.all()`
-  - `Brandibble.create(AddressObject)`
+  - `Brandibble.addresses.create(AddressObject)`
 
       Your address object should look something like this:
 
@@ -107,4 +107,38 @@ All Address Methods are dependent on the authenticated customer (stateful).
 ##### Locations
 
   - `Brandibble.locations.index()`
-  - `Brandibble.locations.menu(locationId)`
+
+      TODO: Menus
+
+##### Orders
+
+Due to the complexity of formatting data for the Orders endpoint, Brandibble.js provides an
+`Order` constructor, that can be used as such:
+
+```js
+let newOrder = new BrandibbleRef.Order(location, 'pickup');
+let lineItem = newOrder.addLineItem(product, 1);
+
+newOrder.isValid(); // false
+lineItem.isValid(); // false
+lineItem.errors(); // error details, formatted as an array
+
+let bases = lineItem.optionGroups()[0];
+
+// Configure Line Item
+lineItem.addOption(bases, bases.option_items[2]);
+lineItem.removeOption(bases, bases.option_items[2]);
+lineItem.addOption(bases, bases.option_items[1]);
+
+lineItem.setLineItemQuantity(lineItem, 7);
+
+lineItem.isValid() // true
+newOrder.isValid() // true
+
+BrandibbleRef.orders.validate(newOrder);
+```
+
+There are only two methods that you can do on an Order:
+
+- `Brandibble.orders.validate(BrandibbleOrderModel)`
+- `Brandibble.orders.submit(BrandibbleOrderModel)`
