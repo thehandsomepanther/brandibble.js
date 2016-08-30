@@ -1,7 +1,5 @@
-import { buildRef } from './../helpers';
 import productJSON from './../product.stub';
 import locationJSON from './../location.stub';
-let Brandibble = buildRef();
 
 describe('Order', () => {
   it('can add a LineItem', () => {

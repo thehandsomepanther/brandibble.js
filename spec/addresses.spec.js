@@ -1,22 +1,21 @@
 import { retrieve } from '../lib/utils';
-import { seedEmail, seedText, buildRef, shouldSucceed, shouldError, TestingUser } from './helpers';
-let BrandibbleRef = buildRef();
+import { seedEmail, seedText, shouldSucceed, shouldError, TestingUser } from './helpers';
 
 describe('Addresses', () => {
   beforeEach(done => {
-    BrandibbleRef.customers.invalidate().then(() => done());
+    Brandibble.customers.invalidate().then(done);
   });
 
-  it('exists', () => expect(BrandibbleRef.addresses).to.exist);
+  it('exists', () => expect(Brandibble.addresses).to.exist);
 
   it('can show all addresses for a customer', done => {
     const { email, password } = TestingUser;
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email,
       password
     }).then(response => {
       let data = shouldSucceed(response);
-      BrandibbleRef.addresses.all().then(response => {
+      Brandibble.addresses.all().then(response => {
         let data = shouldSucceed(response);
         expect(data).to.be.a('array');
         done();
@@ -25,22 +24,24 @@ describe('Addresses', () => {
   });
 
   it('will fail when there is no current customer', done => {
-    BrandibbleRef.addresses.all().catch(response => {
+    Brandibble.addresses.all().catch(response => {
       let errors = shouldError(response);
       expect(errors).to.be.a('array').to.have.lengthOf(1);
       expect(errors[0]).to.have.property('code', 'customer_token.missing');
       done();
+    }).then(response => {
+      debugger;
     });
   });
 
   it('will fail when requesting a different customer to the current', done => {
     const { email, password } = TestingUser;
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email,
       password
     }).then(response => {
       let data = shouldSucceed(response);
-      BrandibbleRef.adapter.request('GET', `customers/1/addresses`).catch(response => {
+      Brandibble.adapter.request('GET', `customers/1/addresses`).catch(response => {
         let errors = shouldError(response);
         expect(errors).to.be.a('array').to.have.lengthOf(1);
         done();
@@ -51,12 +52,12 @@ describe('Addresses', () => {
 
   it('can create a new address for a customer', done => {
     const { email, password } = TestingUser;
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email,
       password
     }).then(response => {
       let data = shouldSucceed(response);
-      BrandibbleRef.addresses.create({
+      Brandibble.addresses.create({
         street_address: '123 Street St',
         unit: '4 FL',
         city: 'New York',
