@@ -3127,8 +3127,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var address = serializedOrder.address;
 
 	        var order = new _order2.default(_this, locationId, serviceType, miscOptions);
-	        order.address = address;
-	        order.customer = customer;
+	        if (address) {
+	          order.address = address;
+	        }
+	        if (customer) {
+	          order.customer = customer;
+	        }
 	        _this.currentOrder = order.rehydrateCart(cart);
 	        return _this.currentOrder;
 	      });
