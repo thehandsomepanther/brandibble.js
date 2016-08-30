@@ -1,6 +1,4 @@
-import { buildRef } from './../helpers';
 import productJSON from './../product.stub';
-let Brandibble = buildRef();
 
 describe('LineItem', () => {
   it('handles validity', () => {
