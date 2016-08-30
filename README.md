@@ -16,6 +16,13 @@ let BrandibbleRef = new Brandibble({
   brandId: 23
 });
 
+// You'll need to set it up like so:
+BrandibbleRef.setup().then(() => {
+  // ... do stuff
+});
+```
+
+```js
 // Create A Customer
 let password = 'password';
 
@@ -151,3 +158,18 @@ There are only two methods that you can do on an Order:
 
 - `Brandibble.orders.validate(BrandibbleOrderModel)`
 - `Brandibble.orders.submit(BrandibbleOrderModel)`
+
+##### Order Hydration
+
+Brandibble uses localForage to persist an order over page loads.  You can use it like so:
+
+```js
+let newOrder = new BrandibbleRef.Order(location, 'delivery');
+BrandibbleRef.adapter.persistCurrentOrder(newOrder).then(() => {
+
+  BrandibbleRef.adapter.restoreCurrentOrder().then(restoredOrder => {
+    //... this is the restored copy of the order.
+  });
+});
+```
+
