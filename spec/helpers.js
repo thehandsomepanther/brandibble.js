@@ -41,7 +41,7 @@ export function shouldError(response) {
   return response.errors;
 }
 
-export function configureTestingOrder(Brandibble, customer, address, card) {
+export function configureTestingOrder(Brandibble, customer, address) {
   return Brandibble.locations.index().then(response => {
     let data = shouldSucceed(response);
     expect(data).to.be.a('array');
@@ -55,27 +55,33 @@ export function configureTestingOrder(Brandibble, customer, address, card) {
       expect(data).to.be.a('object');
       expect(data.menu).to.be.a('array');
 
-      let newOrder = new Brandibble.Order(location.location_id, serviceType);
-      let product  = data.menu[0].children[0].items[0];
-      let lineItem = newOrder.cart.addLineItem(product, 1);
+      return Brandibble.orders.create(location.location_id, serviceType).then(newOrder => {
+        let product  = data.menu[0].children[0].items[0];
+        return newOrder.addLineItem(product, 1).then(lineItem => {
 
-      expect(lineItem.product.name).to.equal('Charred Chicken');
-      expect(lineItem.isValid()).to.equal(false);
-      expect(newOrder.cart.isValid()).to.equal(false);
+          expect(lineItem.product.name).to.equal('Charred Chicken');
+          expect(lineItem.isValid()).to.equal(false);
+          expect(newOrder.cart.isValid()).to.equal(false);
 
-      let bases = lineItem.optionGroups()[0];
-      let sides = lineItem.optionGroups()[1];
+          let bases = lineItem.optionGroups()[0];
+          let sides = lineItem.optionGroups()[1];
 
-      lineItem.addOption(bases, bases.option_items[0])
-      lineItem.addOption(sides, sides.option_items[0])
+          return Promise.all([
+            newOrder.addOptionToLineItem(lineItem, bases, bases.option_items[0]),
+            newOrder.addOptionToLineItem(lineItem, sides, sides.option_items[0])
+          ]).then(() => {
+            expect(lineItem.isValid()).to.equal(true);
+            expect(newOrder.cart.isValid()).to.equal(true);
 
-      expect(lineItem.isValid()).to.equal(true);
-      expect(newOrder.cart.isValid()).to.equal(true);
+            let promises = [];
 
-      if (customer) { newOrder.setCustomer(customer); }
-      if (address) { newOrder.setAddress(address); }
-      if (card) { newOrder.setCard(card); }
-      return newOrder;
+            if (customer) { promises.push(newOrder.setCustomer(customer)); }
+            if (address) { newOrder.setAddress(address); }
+
+            return Promise.all(promises).then(() => newOrder);
+          });
+        });
+      });
     });
   });
 }

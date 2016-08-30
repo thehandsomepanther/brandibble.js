@@ -15,10 +15,10 @@ describe('Adapter', () => {
     configureTestingOrder(Brandibble).then(order => {
       Brandibble.adapter.persistCurrentOrder(order).then(savedOrder => {
         expect(order).to.equal(savedOrder);
-          expect(savedOrder).to.be.an.instanceof(Brandibble.Order);
+        expect(savedOrder).to.be.an.instanceof(Brandibble.Order);
         done();
       });
-    });
+    }).catch(error => console.log(error));
   })
 
   it('can restore currentOrder from localStorage', done => {
@@ -30,6 +30,6 @@ describe('Adapter', () => {
           done();
         });
       });
-    });
+    }).catch(error => console.log(error));
   })
 });

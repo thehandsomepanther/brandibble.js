@@ -29,8 +29,8 @@ describe('Orders', () => {
           cc_zip: 12345,
           cc_cvv: 123
         };
-        return configureTestingOrder(Brandibble, customer, address, card)
-          .then(Brandibble.orders.submit.bind(Brandibble.orders))
+        return configureTestingOrder(Brandibble, customer, address)
+          .then(testingOrder => Brandibble.orders.submit(testingOrder, "credit", card))
           .then(response => {
             expect(response).to.be.true
             done();
