@@ -29,8 +29,6 @@ describe('Addresses', () => {
       expect(errors).to.be.a('array').to.have.lengthOf(1);
       expect(errors[0]).to.have.property('code', 'customer_token.missing');
       done();
-    }).then(response => {
-      debugger;
     });
   });
 
