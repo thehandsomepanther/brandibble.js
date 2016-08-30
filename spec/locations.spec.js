@@ -1,10 +1,11 @@
-import { shouldSucceed, shouldError } from './helpers';
+import { buildRef, shouldSucceed, shouldError } from './helpers';
+let BrandibbleRef = buildRef();
 
 describe('Locations', () => {
-  it('exists', () => { expect(Brandibble.locations).to.exist });
+  it('exists', () => { expect(BrandibbleRef.locations).to.exist });
 
   it('can show all locations', done => {
-    Brandibble.locations.index().then(response => {
+    BrandibbleRef.locations.index().then(response => {
       let data = shouldSucceed(response);
       expect(data).to.be.a('array');
       done();
