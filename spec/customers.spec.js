@@ -1,14 +1,13 @@
 import { retrieve } from '../lib/utils';
-import { seedEmail, seedText, buildRef, shouldSucceed, shouldError } from './helpers';
-let BrandibbleRef = buildRef();
+import { seedEmail, seedText, shouldSucceed, shouldError } from './helpers';
 
 describe('Customers', () => {
   beforeEach(() => window.localStorage.clear());
 
-  it('exists', () => expect(BrandibbleRef.customers).to.exist);
+  it('exists', () => expect(Brandibble.customers).to.exist);
 
   it('can create a customer', done => {
-    BrandibbleRef.customers.create({
+    Brandibble.customers.create({
       first_name: 'Sanctuary',
       last_name: 'Testing',
       email: seedEmail(),
@@ -25,7 +24,7 @@ describe('Customers', () => {
   });
 
   it('create fails with bad inputs', done => {
-    BrandibbleRef.customers.create({
+    Brandibble.customers.create({
       first_name: 'Sanctuary',
       last_name: 'Testing',
       email: 'nope',
@@ -40,7 +39,7 @@ describe('Customers', () => {
   });
 
   it('can retrieve a token', done => {
-    BrandibbleRef.customers.token({
+    Brandibble.customers.token({
       email: 'sanctuary-testing-customer@example.com',
       password: 'password'
     }).then(response => {
@@ -51,7 +50,7 @@ describe('Customers', () => {
   });
 
   it('fails to retrieve a token with bad inputs', done => {
-    BrandibbleRef.customers.token({
+    Brandibble.customers.token({
       email: 'sanctuary-testing-customer@example.com',
       password: 'nope'
     }).catch(response => {
@@ -63,7 +62,7 @@ describe('Customers', () => {
   });
 
   it('can authenticate the client with a current customer', done => {
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email: 'sanctuary-testing-customer@example.com',
       password: 'password'
     }).then(response => {
@@ -71,18 +70,10 @@ describe('Customers', () => {
       expect(data).to.have.property('email', 'sanctuary-testing-customer@example.com');
 
       // Customer Token is set in local storage
-      expect(BrandibbleRef.adapter.customerToken).to.be.a('string');
-      let localStorageData = retrieve(BrandibbleRef.adapter.localStorageKey);
-      expect(localStorageData.customerToken).to.be.a('string', BrandibbleRef.adapter.customerToken);
+      expect(Brandibble.adapter.customerToken).to.be.a('string');
 
-      // New Refs should automatically restore the customer token (for page refresh)
-      let OtherBrandibbleRef = buildRef();
-      expect(OtherBrandibbleRef.adapter.customerToken).to.be.a('string', BrandibbleRef.adapter.customerToken);
-
-      BrandibbleRef.customers.invalidate().then(() => {
-        expect(BrandibbleRef.adapter.customerToken).to.not.exist;
-        let localStorageData = retrieve(BrandibbleRef.adapter.localStorageKey);
-        expect(localStorageData.customerToken).to.not.exist;
+      Brandibble.customers.invalidate().then(() => {
+        expect(Brandibble.adapter.customerToken).to.not.exist;
         done();
       });
     });
@@ -90,7 +81,7 @@ describe('Customers', () => {
 
   /* TODO: This should not require a customer-token, waiting on JC
   it('can validate a customers metadata', done => {
-    BrandibbleRef.customers.validateCustomer({ email: 'sanctuary-testing-customer@example.com' }).then(response => {
+    Brandibble.customers.validateCustomer({ email: 'sanctuary-testing-customer@example.com' }).then(response => {
       debugger;
       done();
     });
@@ -98,18 +89,18 @@ describe('Customers', () => {
   */
 
   it('can trigger a customers reset password flow', done => {
-    BrandibbleRef.customers.resetPassword({ email: "sanctuary-testing-customer@example.com" }).then(response => {
+    Brandibble.customers.resetPassword({ email: "sanctuary-testing-customer@example.com" }).then(response => {
       expect(response).to.be.true;
       done();
     });
   });
 
   it('can not show a customer that does not belong to the current token', done => {
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email: 'sanctuary-testing-customer@example.com',
       password: 'password'
     }).then(response => {
-      BrandibbleRef.customers.show(1).catch(response => {
+      Brandibble.customers.show(1).catch(response => {
         let errors = shouldError(response);
         expect(errors).to.have.lengthOf(1);
         expect(errors[0]).to.have.property('code', 'customers.show.token_mismatch');
@@ -119,12 +110,12 @@ describe('Customers', () => {
   });
 
   it('can update the current customer', done => {
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email: 'sanctuary-testing-customer@example.com',
       password: 'password'
     }).then(response => {
       let newLastName = seedText();
-      BrandibbleRef.customers.updateCurrent({
+      Brandibble.customers.updateCurrent({
         last_name: newLastName
       }).then(response => {
         let data = shouldSucceed(response);
@@ -135,12 +126,12 @@ describe('Customers', () => {
   });
 
   it('can not update a customer that does not own the current token', done => {
-    BrandibbleRef.customers.authenticate({
+    Brandibble.customers.authenticate({
       email: 'sanctuary-testing-customer@example.com',
       password: 'password'
     }).then(response => {
       let newLastName = seedText();
-      BrandibbleRef.customers.update({ last_name: newLastName }, 5).catch(response => {
+      Brandibble.customers.update({ last_name: newLastName }, 5).catch(response => {
         let errors = shouldError(response);
         expect(errors).to.have.lengthOf(1);
         expect(errors[0]).to.have.property('code', 'customers.update.token_mismatch');
