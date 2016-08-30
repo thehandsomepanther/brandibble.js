@@ -119,13 +119,12 @@ All Address Methods are dependent on the authenticated customer (stateful).
 
 ##### Orders
 
-Due to the complexity of formatting data for the Orders endpoint, Brandibble.js provides an
-`Order` constructor, that can be used as such:
-
 ```js
 // Assemble an Order first!
 
-let newOrder = new BrandibbleRef.Order(location, 'pickup');
+BrandibbleRef.orders.create(location, 'pickup');
+let newOrder = BrandibbleRef.orders.current();
+
 let lineItem = newOrder.addLineItem(product, 1);
 
 newOrder.isValid(); // false
@@ -158,18 +157,3 @@ There are only two methods that you can do on an Order:
 
 - `Brandibble.orders.validate(BrandibbleOrderModel)`
 - `Brandibble.orders.submit(BrandibbleOrderModel)`
-
-##### Order Hydration
-
-Brandibble uses localForage to persist an order over page loads.  You can use it like so:
-
-```js
-let newOrder = new BrandibbleRef.Order(location, 'delivery');
-BrandibbleRef.adapter.persistCurrentOrder(newOrder).then(() => {
-
-  BrandibbleRef.adapter.restoreCurrentOrder().then(restoredOrder => {
-    //... this is the restored copy of the order.
-  });
-});
-```
-
