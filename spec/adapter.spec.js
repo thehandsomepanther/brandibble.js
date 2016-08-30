@@ -15,16 +15,18 @@ describe('Adapter', () => {
     configureTestingOrder(Brandibble).then(order => {
       Brandibble.adapter.persistCurrentOrder(order).then(savedOrder => {
         expect(order).to.equal(savedOrder);
+          expect(savedOrder).to.be.an.instanceof(Brandibble.Order);
         done();
       });
     });
   })
 
-  it('can restore currentOrder from localStorage', () => {
+  it('can restore currentOrder from localStorage', done => {
     configureTestingOrder(Brandibble).then(order => {
       Brandibble.adapter.persistCurrentOrder(order).then(() => {
         Brandibble.adapter.restoreCurrentOrder().then(retrievedOrder => {
-          expect(order).to.equal(retrievedOrder);
+          expect(order).to.deep.equal(retrievedOrder);
+          expect(retrievedOrder).to.be.an.instanceof(Brandibble.Order);
           done();
         });
       });
