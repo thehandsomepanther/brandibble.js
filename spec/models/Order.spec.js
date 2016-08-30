@@ -1,5 +1,6 @@
 import productJSON from './../product.stub';
 import locationJSON from './../location.stub';
+import { TestingAddress } from '../helpers';
 
 describe('Order', () => {
   it('can add a LineItem', () => {
@@ -63,6 +64,30 @@ describe('Order', () => {
     };
     newOrder.setCustomer(customer).then(order => {
       expect(newOrder.customer).to.have.keys(['first_name', 'last_name', 'password', 'email']);
+      done();
+    });
+  });
+
+  it('does not validate when IDs are passed for address', done => {
+    let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    newOrder.setAddress({customer_address_id: 123}).then(savedOrder => {
+      expect(savedOrder.address.customer_address_id).to.exist;
+      done();
+    });
+  });
+
+  it('returns errors for invalid addresses', done => {
+    let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    newOrder.setAddress({invalidKey: 'hi'}).catch(errors => {
+      expect(errors).to.be.an('object');
+      done();
+    })
+  });
+
+  it('returns true for valid addresses', done => {
+    let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    newOrder.setAddress(TestingAddress).then(order => {
+      expect(newOrder.address).to.deep.equal(TestingAddress);
       done();
     });
   });
