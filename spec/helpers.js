@@ -1,5 +1,3 @@
-import Brandibble from '..';
-
 export const TestingUser = {
   first_name: 'Sanctuary',
   last_name: 'Testing',
@@ -20,22 +18,15 @@ export const TestingAddress = {
   contact_phone: '5512213610'
 };
 
+export const UnsecureApiKey = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ5ODU4MzQ0MiwiaWF0IjoxNDY3MDQ3NDQyfQ.eyJlbWFpbCI6Imh1Z2hAc2FuY3R1YXJ5Y29tcHV0ZXIuY29tIiwiZG9tYWluIjoiaHR0cHM6Ly9zYW5jdHVhcnkuY29tcHV0ZXIiLCJhcGlfdXNlcl9pZCI6MywibmFtZSI6IlNhbmN0dWFyeSJ9.clbyJWm-gj4Z120isZhL-Zk1Voy80pJJWsHfgnqGaxk';
+
 export function seedEmail() {
   return `sanctuary-testing-${(new Date()).valueOf().toString()}@example.com`;
 }
 
-export const UnsecureApiKey = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ5ODU4MzQ0MiwiaWF0IjoxNDY3MDQ3NDQyfQ.eyJlbWFpbCI6Imh1Z2hAc2FuY3R1YXJ5Y29tcHV0ZXIuY29tIiwiZG9tYWluIjoiaHR0cHM6Ly9zYW5jdHVhcnkuY29tcHV0ZXIiLCJhcGlfdXNlcl9pZCI6MywibmFtZSI6IlNhbmN0dWFyeSJ9.clbyJWm-gj4Z120isZhL-Zk1Voy80pJJWsHfgnqGaxk';
 
 export function seedText() {
   return `Testing ${(new Date()).valueOf().toString()}`;
-}
-
-export function buildRef() {
-  return new Brandibble({
-    apiKey: UnsecureApiKey,
-    brandId: 6,
-    apiEndpoint: 'https://staging.brandibble.co/api/'
-  });
 }
 
 export function shouldSucceed(response) {
@@ -48,4 +39,49 @@ export function shouldError(response) {
   expect(response).to.be.a('object');
   expect(response).to.have.property('errors');
   return response.errors;
+}
+
+export function configureTestingOrder(Brandibble, customer, address) {
+  return Brandibble.locations.index().then(response => {
+    let data = shouldSucceed(response);
+    expect(data).to.be.a('array');
+
+    let serviceType = 'pickup';
+    let location = data[0];
+    expect(location.name).to.equal('Columbia');
+
+    return Brandibble.menus.build(location.location_id, serviceType).then(response => {
+      let data = shouldSucceed(response);
+      expect(data).to.be.a('object');
+      expect(data.menu).to.be.a('array');
+
+      return Brandibble.orders.create(location.location_id, serviceType).then(newOrder => {
+        let product  = data.menu[0].children[0].items[0];
+        return newOrder.addLineItem(product, 1).then(lineItem => {
+
+          expect(lineItem.product.name).to.equal('Charred Chicken');
+          expect(lineItem.isValid()).to.equal(false);
+          expect(newOrder.cart.isValid()).to.equal(false);
+
+          let bases = lineItem.optionGroups()[0];
+          let sides = lineItem.optionGroups()[1];
+
+          return Promise.all([
+            newOrder.addOptionToLineItem(lineItem, bases, bases.option_items[0]),
+            newOrder.addOptionToLineItem(lineItem, sides, sides.option_items[0])
+          ]).then(() => {
+            expect(lineItem.isValid()).to.equal(true);
+            expect(newOrder.cart.isValid()).to.equal(true);
+
+            let promises = [];
+
+            if (customer) { promises.push(newOrder.setCustomer(customer)); }
+            if (address) { promises.push(newOrder.setAddress(address)); }
+
+            return Promise.all(promises).then(() => newOrder);
+          });
+        });
+      });
+    });
+  });
 }
