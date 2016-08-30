@@ -76,7 +76,7 @@ export function configureTestingOrder(Brandibble, customer, address) {
             let promises = [];
 
             if (customer) { promises.push(newOrder.setCustomer(customer)); }
-            if (address) { newOrder.setAddress(address); }
+            if (address) { promises.push(newOrder.setAddress(address)); }
 
             return Promise.all(promises).then(() => newOrder);
           });
