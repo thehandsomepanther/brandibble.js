@@ -3123,8 +3123,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var serviceType = serializedOrder.serviceType;
 	        var miscOptions = serializedOrder.miscOptions;
 	        var cart = serializedOrder.cart;
+	        var customer = serializedOrder.customer;
+	        var address = serializedOrder.address;
 
 	        var order = new _order2.default(_this, locationId, serviceType, miscOptions);
+	        order.address = address;
+	        order.customer = customer;
 	        _this.currentOrder = order.rehydrateCart(cart);
 	        return _this.currentOrder;
 	      });
@@ -5584,10 +5588,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'setAddress',
 	    value: function setAddress(address) {
-	      // TODO: Validate
-	      // address attrs
-	      // TODO: Address Persistance
-	      this.address = address;
+	      var customer_address_id = address.customer_address_id;
+
+	      if (customer_address_id) {
+	        this.address = { customer_address_id: customer_address_id };
+	        return this.adapter.persistCurrentOrder(this);
+	      }
+	      var result = (0, _validate2.default)(address, _validations.addressValidations);
+	      if (!result) {
+	        this.address = address;
+	        return this.adapter.persistCurrentOrder(this);
+	      }
+	      return Promise.reject(result);
 	    }
 	  }, {
 	    key: 'isValid',
@@ -22810,6 +22822,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	  last_name: {
 	    presence: true
 	  }
+	};
+
+	var addressValidations = exports.addressValidations = {
+	  street_address: {
+	    presence: true,
+	    length: { minimum: 3 }
+	  },
+	  unit: {},
+	  city: {
+	    presence: true,
+	    length: { minimum: 3 }
+	  },
+	  state_code: {
+	    presence: true,
+	    length: { is: 2 }
+	  },
+	  zip_code: {
+	    presence: true,
+	    length: { is: 5 }
+	  },
+	  latitude: {
+	    presence: true,
+	    numericality: true
+	  },
+	  longitude: {
+	    presence: true,
+	    numericality: true
+	  },
+	  company: {
+	    length: { minimum: 3 }
+	  },
+	  contact_name: {},
+	  contact_phone: {}
 	};
 
 	var productValidations = exports.productValidations = {
