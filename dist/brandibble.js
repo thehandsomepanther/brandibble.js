@@ -573,7 +573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /* Build adapter */
 	    this.adapter = new _adapter2.default({ apiKey: apiKey, apiBase: apiBase });
 
-	    /* Export Models */
+	    /* Build Resources */
 	    this.Order = _order2.default;
 	    this.LineItem = _lineItem2.default;
 
@@ -594,7 +594,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this = this;
 
 	      return this.adapter.restoreCustomerToken().then(function () {
-	        return _this;
+	        return _this.adapter.restoreCurrentOrder().then(function () {
+	          return _this;
+	        });
 	      });
 	    }
 	  }]);
@@ -3112,20 +3114,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'restoreCurrentOrder',
 	    value: function restoreCurrentOrder() {
+	      var _this = this;
+
 	      return _localforage2.default.getItem('currentOrder').then(function (serializedOrder) {
+	        if (!serializedOrder) return;
+
 	        var locationId = serializedOrder.locationId;
 	        var serviceType = serializedOrder.serviceType;
 	        var miscOptions = serializedOrder.miscOptions;
 	        var cart = serializedOrder.cart;
 
-	        var order = new _order2.default(locationId, serviceType, miscOptions);
-	        return order.rehydrateCart(cart);
+	        var order = new _order2.default(_this, locationId, serviceType, miscOptions);
+	        _this.currentOrder = order.rehydrateCart(cart);
+	        return _this.currentOrder;
 	      });
 	    }
 	  }, {
 	    key: 'persistCurrentOrder',
 	    value: function persistCurrentOrder(order) {
-	      return _localforage2.default.setItem('currentOrder', order);
+	      this.currentOrder = order;
+	      return _localforage2.default.setItem('currentOrder', order).then(function () {
+	        return order;
+	      });
 	    }
 	  }, {
 	    key: 'flushCurrentOrder',
@@ -3135,28 +3145,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'restoreCustomerToken',
 	    value: function restoreCustomerToken() {
-	      var _this = this;
+	      var _this2 = this;
 
 	      return _localforage2.default.getItem('customerToken').then(function (customerToken) {
-	        _this.customerToken = customerToken;
+	        _this2.customerToken = customerToken;
 	      });
 	    }
 	  }, {
 	    key: 'persistCustomerToken',
 	    value: function persistCustomerToken(customerToken) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      return _localforage2.default.setItem('customerToken', customerToken).then(function (token) {
-	        _this2.customerToken = token;
+	        _this3.customerToken = token;
 	      });
 	    }
 	  }, {
 	    key: 'flushCustomerToken',
 	    value: function flushCustomerToken() {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      return this.flushAll().then(function () {
-	        _this3.customerToken = null;
+	        _this4.customerToken = null;
 	      });
 	    }
 	  }, {
@@ -5499,9 +5509,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _cart5 = __webpack_require__(13);
+	var _cart7 = __webpack_require__(13);
 
-	var _cart6 = _interopRequireDefault(_cart5);
+	var _cart8 = _interopRequireDefault(_cart7);
 
 	var _validate = __webpack_require__(9);
 
@@ -5516,18 +5526,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	var defaultOptions = {
 	  include_utensils: true,
 	  notes_for_store: "",
-	  payment_type: "credit",
 	  tip: 0
 	};
 
 	var Order = function () {
-	  function Order(location_id) {
-	    var serviceType = arguments.length <= 1 || arguments[1] === undefined ? 'delivery' : arguments[1];
-	    var miscOptions = arguments.length <= 2 || arguments[2] === undefined ? defaultOptions : arguments[2];
+	  function Order(adapter, location_id) {
+	    var serviceType = arguments.length <= 2 || arguments[2] === undefined ? 'delivery' : arguments[2];
+	    var miscOptions = arguments.length <= 3 || arguments[3] === undefined ? defaultOptions : arguments[3];
 
 	    _classCallCheck(this, Order);
 
-	    this.cart = new _cart6.default();
+	    this.adapter = adapter;
+	    this.cart = new _cart8.default();
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
@@ -5546,8 +5556,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var madeFor = serializedLineItem.madeFor;
 	        var instructions = serializedLineItem.instructions;
 	        var configuration = serializedLineItem.configuration;
+	        /* Important: add directly from cart to avoid new writes to localforage */
 
-	        var lineItem = _this.addLineItem(product, quantity);
+	        var lineItem = _this.cart.addLineItem(product, quantity);
 	        lineItem.madeFor = madeFor;
 	        lineItem.instructions = instructions;
 	        lineItem.configuration = configuration;
@@ -5561,37 +5572,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      if (customer_id) {
 	        this.customer = { customer_id: customer_id };
-	        return true;
+	        return this.adapter.persistCurrentOrder(this);
 	      }
 	      var result = (0, _validate2.default)(customer, _validations.customerValidations);
 	      if (!result) {
 	        this.customer = customer;
-	        return true;
+	        return this.adapter.persistCurrentOrder(this);
 	      }
-	      return result;
+	      return Promise.reject(result);
 	    }
 	  }, {
 	    key: 'setAddress',
 	    value: function setAddress(address) {
 	      // TODO: Validate
 	      // address attrs
+	      // TODO: Address Persistance
 	      this.address = address;
-	    }
-	  }, {
-	    key: 'setCard',
-	    value: function setCard(card) {
-	      var customer_card_id = card.customer_card_id;
-
-	      if (customer_card_id) {
-	        this.card = { customer_card_id: customer_card_id };
-	        return true;
-	      }
-	      var result = (0, _validate2.default)(card, _validations.cardValidations);
-	      if (!result) {
-	        this.card = card;
-	        return true;
-	      }
-	      return result;
 	    }
 	  }, {
 	    key: 'isValid',
@@ -5603,28 +5599,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function addLineItem() {
 	      var _cart;
 
-	      return (_cart = this.cart).addLineItem.apply(_cart, arguments);
+	      var lineItem = (_cart = this.cart).addLineItem.apply(_cart, arguments);
+	      return this.adapter.persistCurrentOrder(this).then(function () {
+	        return lineItem;
+	      });
+	    }
+	  }, {
+	    key: 'addOptionToLineItem',
+	    value: function addOptionToLineItem() {
+	      var _cart2;
+
+	      var lineItem = (_cart2 = this.cart).addOptionToLineItem.apply(_cart2, arguments);
+	      return this.adapter.persistCurrentOrder(this).then(function () {
+	        return lineItem;
+	      });
+	    }
+	  }, {
+	    key: 'removeOptionFromLineItem',
+	    value: function removeOptionFromLineItem() {
+	      var _cart3;
+
+	      var lineItem = (_cart3 = this.cart).removeOptionFromLineItem.apply(_cart3, arguments);
+	      return this.adapter.persistCurrentOrder(this).then(function () {
+	        return lineItem;
+	      });
 	    }
 	  }, {
 	    key: 'getLineItemQuantity',
 	    value: function getLineItemQuantity() {
-	      var _cart2;
+	      var _cart4;
 
-	      return (_cart2 = this.cart).getLineItemQuantity.apply(_cart2, arguments);
+	      return (_cart4 = this.cart).getLineItemQuantity.apply(_cart4, arguments);
 	    }
 	  }, {
 	    key: 'setLineItemQuantity',
 	    value: function setLineItemQuantity() {
-	      var _cart3;
+	      var _cart5;
 
-	      return (_cart3 = this.cart).setLineItemQuantity.apply(_cart3, arguments);
+	      var lineItem = (_cart5 = this.cart).setLineItemQuantity.apply(_cart5, arguments);
+	      return this.adapter.persistCurrentOrder(this).then(function () {
+	        return lineItem;
+	      });
 	    }
 	  }, {
 	    key: 'removeLineItem',
 	    value: function removeLineItem() {
-	      var _cart4;
+	      var _cart6;
 
-	      return (_cart4 = this.cart).removeLineItem.apply(_cart4, arguments);
+	      var remainingLineItems = (_cart6 = this.cart).removeLineItem.apply(_cart6, arguments);
+	      return this.adapter.persistCurrentOrder(this).then(function () {
+	        return remainingLineItems;
+	      });
 	    }
 	  }, {
 	    key: 'formatForValidation',
@@ -5679,17 +5704,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'formatCard',
-	    value: function formatCard() {
-	      if (!this.card) {
+	    value: function formatCard(card) {
+	      if (!card) {
 	        return {};
 	      }
-	      // TODO: Need card_id info from JC
-	      var _card = this.card;
-	      var customer_card_id = _card.customer_card_id;
-	      var cc_expiration = _card.cc_expiration;
-	      var cc_number = _card.cc_number;
-	      var cc_zip = _card.cc_zip;
-	      var cc_cvv = _card.cc_cvv;
+	      var customer_card_id = card.customer_card_id;
+	      var cc_expiration = card.cc_expiration;
+	      var cc_number = card.cc_number;
+	      var cc_zip = card.cc_zip;
+	      var cc_cvv = card.cc_cvv;
 
 	      if (customer_card_id) {
 	        return { customer_card_id: customer_card_id };
@@ -5699,10 +5722,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'format',
 	    value: function format() {
+	      var payment_type = arguments.length <= 0 || arguments[0] === undefined ? "cash" : arguments[0];
+	      var card = arguments[1];
 	      var _miscOptions = this.miscOptions;
 	      var include_utensils = _miscOptions.include_utensils;
 	      var notes_for_store = _miscOptions.notes_for_store;
-	      var payment_type = _miscOptions.payment_type;
 	      var tip = _miscOptions.tip;
 
 
@@ -5718,7 +5742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 
 	      if (payload.payment_type === "credit") {
-	        payload.credit_card = this.formatCard();
+	        payload.credit_card = this.formatCard(card);
 	      }
 	      if (payload.payment_type !== "cash") {
 	        payload.tip = tip;
@@ -5781,6 +5805,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return lineItem;
 	    }
 	  }, {
+	    key: 'addOptionToLineItem',
+	    value: function addOptionToLineItem(lineItem, group, item) {
+	      var match = _lodash2.default.find(this.lineItems, function (li) {
+	        return _lodash2.default.isEqual(li, lineItem);
+	      });
+	      if (match) {
+	        return match.addOption(group, item);
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'removeOptionFromLineItem',
+	    value: function removeOptionFromLineItem(lineItem, item) {
+	      var match = _lodash2.default.find(this.lineItems, function (li) {
+	        return _lodash2.default.isEqual(li, lineItem);
+	      });
+	      if (match) {
+	        return match.removeOption(item);
+	      }
+	      return false;
+	    }
+	  }, {
 	    key: 'getLineItemQuantity',
 	    value: function getLineItemQuantity(lineItem) {
 	      var match = _lodash2.default.find(this.lineItems, function (li) {
@@ -5800,7 +5846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _lodash2.default.isEqual(li, lineItem);
 	      });
 	      if (match) {
-	        match.quantity = quantity;return true;
+	        match.quantity = quantity;return quantity;
 	      }
 	      return false;
 	    }
@@ -22988,7 +23034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 21 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -22997,6 +23043,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _order = __webpack_require__(12);
+
+	var _order2 = _interopRequireDefault(_order);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -23008,6 +23060,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  _createClass(Orders, [{
+	    key: 'create',
+	    value: function create(locationId, serviceType, miscOptions) {
+	      var order = new _order2.default(this.adapter, locationId, serviceType, miscOptions);
+	      return this.adapter.persistCurrentOrder(order);
+	    }
+	  }, {
+	    key: 'current',
+	    value: function current() {
+	      return this.adapter.currentOrder;
+	    }
+	  }, {
 	    key: 'validate',
 	    value: function validate(orderObj) {
 	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
@@ -23017,9 +23080,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'submit',
-	    value: function submit(orderObj) {
+	    value: function submit(orderObj, paymentType, card) {
 	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
-	      var body = orderObj.format();
+	      var body = orderObj.format(paymentType, card);
 	      body.requested_at = requested_at;
 	      return this.adapter.request('POST', 'orders/create', body);
 	    }
