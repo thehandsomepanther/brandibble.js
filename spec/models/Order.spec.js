@@ -30,12 +30,15 @@ describe('Order', () => {
     });
   });
 
-  it('can remove a LineItem', () => {
+  it('can remove a LineItem', done => {
     let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
-    newOrder.addLineItem(productJSON);
-    let lineItem = expect(newOrder.cart.lineItems).to.have.lengthOf(1);
-    newOrder.removeLineItem(lineItem);
-    expect(newOrder.cart.lineItems).to.have.lengthOf(0);
+    newOrder.addLineItem(productJSON).then(lineItem => {
+      expect(newOrder.cart.lineItems).to.have.lengthOf(1);
+      newOrder.removeLineItem(lineItem).then(() => {
+        expect(newOrder.cart.lineItems).to.have.lengthOf(0);
+        done();
+      }).catch(error => console.log(error));
+    }).catch(error => console.log(error));
   });
 
   it('does not validate when IDs are passed for customers', done => {
