@@ -619,6 +619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.applyPollyfills = applyPollyfills;
 	exports.persist = persist;
 	exports.retrieve = retrieve;
+	exports.generateUUID = generateUUID;
 
 	var _es6Promise = __webpack_require__(4);
 
@@ -723,6 +724,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  amex: [{ response: 'approval', number: '371449635398431' }],
 	  discover: [{ response: 'approval', number: '6011000995500000' }, { response: 'refer_call', number: '6011000995511122' }, { response: 'do_not_honor', number: '6011000995511130' }, { response: 'card_expired', number: '6011000995511148' }, { response: 'insufficient_funds', number: '6011000995511155' }]
 	};
+
+	// http://stackoverflow.com/posts/8809472/revisions
+	function generateUUID() {
+	  var d = new Date().getTime();
+	  if (window.performance && typeof window.performance.now === "function") {
+	    d += performance.now(); //use high-precision timer if available
+	  }
+	  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+	    var r = (d + Math.random() * 16) % 16 | 0;
+	    d = Math.floor(d / 16);
+	    return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+	  });
+	  return uuid;
+	}
 
 /***/ },
 /* 4 */
@@ -5564,9 +5579,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var madeFor = serializedLineItem.madeFor;
 	        var instructions = serializedLineItem.instructions;
 	        var configuration = serializedLineItem.configuration;
+	        var uuid = serializedLineItem.uuid;
 	        /* Important: add directly from cart to avoid new writes to localforage */
 
-	        var lineItem = _this.cart.addLineItem(product, quantity);
+	        var lineItem = _this.cart.addLineItem(product, quantity, uuid);
 	        lineItem.madeFor = madeFor;
 	        lineItem.instructions = instructions;
 	        lineItem.configuration = configuration;
@@ -5815,17 +5831,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'addLineItem',
 	    value: function addLineItem(product) {
 	      var quantity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+	      var uuid = arguments[2];
 
-	      var lineItem = new _lineItem2.default(product, quantity);
+	      var lineItem = new _lineItem2.default(product, quantity, uuid);
 	      this.lineItems.push(lineItem);
 	      return lineItem;
 	    }
 	  }, {
 	    key: 'addOptionToLineItem',
 	    value: function addOptionToLineItem(lineItem, group, item) {
-	      var match = _lodash2.default.find(this.lineItems, function (li) {
-	        return _lodash2.default.isEqual(li, lineItem);
-	      });
+	      var match = _lodash2.default.find(this.lineItems, { uuid: lineItem.uuid });
 	      if (match) {
 	        return match.addOption(group, item);
 	      }
@@ -5834,9 +5849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'removeOptionFromLineItem',
 	    value: function removeOptionFromLineItem(lineItem, item) {
-	      var match = _lodash2.default.find(this.lineItems, function (li) {
-	        return _lodash2.default.isEqual(li, lineItem);
-	      });
+	      var match = _lodash2.default.find(this.lineItems, { uuid: lineItem.uuid });
 	      if (match) {
 	        return match.removeOption(item);
 	      }
@@ -5845,9 +5858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'getLineItemQuantity',
 	    value: function getLineItemQuantity(lineItem) {
-	      var match = _lodash2.default.find(this.lineItems, function (li) {
-	        return _lodash2.default.isEqual(li, lineItem);
-	      });
+	      var match = _lodash2.default.find(this.lineItems, { uuid: lineItem.uuid });
 	      if (match) {
 	        return match.quantity;
 	      }
@@ -5858,9 +5869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function setLineItemQuantity(lineItem) {
 	      var quantity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-	      var match = _lodash2.default.find(this.lineItems, function (li) {
-	        return _lodash2.default.isEqual(li, lineItem);
-	      });
+	      var match = _lodash2.default.find(this.lineItems, { uuid: lineItem.uuid });
 	      if (match) {
 	        match.quantity = quantity;return quantity;
 	      }
@@ -5869,9 +5878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'removeLineItem',
 	    value: function removeLineItem(lineItem) {
-	      this.lineItems = _lodash2.default.filter(this.lineItems, function (li) {
-	        return _lodash2.default.isEqual(li, lineItem);
-	      });
+	      this.lineItems = _lodash2.default.reject(this.lineItems, { uuid: lineItem.uuid });
 	      return this.lineItems;
 	    }
 	  }, {
@@ -22652,6 +22659,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validations = __webpack_require__(16);
 
+	var _utils = __webpack_require__(3);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22659,12 +22668,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	var LineItem = function () {
 	  function LineItem(product) {
 	    var quantity = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+	    var uuid = arguments[2];
 
 	    _classCallCheck(this, LineItem);
 
 	    var result = (0, _validate2.default)(product, _validations.productValidations);
 	    if (result) throw result;
 
+	    /* Allow uuid incase we want to rehyrate this lineItem. */
+	    this.uuid = uuid || (0, _utils.generateUUID)();
 	    this.product = product;
 	    this.quantity = quantity;
 	    this.configuration = [];

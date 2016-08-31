@@ -26,5 +26,5 @@ before(done => {
     BrandibbleRef.customers.create(TestingUser)
       .then(ensureCustomerResourcesExist, ensureCustomerResourcesExist)
       .then(() => done());
-  });
+  }).catch(error => console.log(error));
 });
