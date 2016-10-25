@@ -3079,11 +3079,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var locationId = serializedOrder.locationId;
 	        var serviceType = serializedOrder.serviceType;
 	        var miscOptions = serializedOrder.miscOptions;
+	        var requestedAt = serializedOrder.requestedAt;
 	        var cart = serializedOrder.cart;
 	        var customer = serializedOrder.customer;
 	        var address = serializedOrder.address;
 
-	        var order = new _order2.default(_this, locationId, serviceType, miscOptions);
+	        var order = new _order2.default(_this, locationId, serviceType, miscOptions, requestedAt);
 	        if (address) {
 	          order.address = address;
 	        }
@@ -5499,6 +5500,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  tip: 0
 	};
 
+	var ASAP_STRING = 'asap';
+
 	var Order = function () {
 	  function Order(adapter, location_id) {
 	    var serviceType = arguments.length <= 2 || arguments[2] === undefined ? 'delivery' : arguments[2];
@@ -5511,6 +5514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
+	    this.requestedAt = ASAP_STRING;
 	  }
 
 	  _createClass(Order, [{
@@ -5535,6 +5539,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        lineItem.configuration = configuration;
 	      });
 	      return this;
+	    }
+	  }, {
+	    key: 'setRequestedAt',
+	    value: function setRequestedAt() {
+	      var timestampOrAsap = arguments.length <= 0 || arguments[0] === undefined ? ASAP_STRING : arguments[0];
+
+	      if (timestampOrAsap === ASAP_STRING) {
+	        this.requestedAt = ASAP_STRING;
+	        return this.adapter.persistCurrentOrder(this);
+	      } else {
+	        if (Object.prototype.toString.call(timestampOrAsap) === "[object Date]") {
+	          this.requestedAt = timestampOrAsap.toISOString().split('.')[0] + 'Z';
+	          return this.adapter.persistCurrentOrder(this);
+	        }
+	      }
+	      return Promise.reject("You passed an invalid argument to setRequestedAt.");
 	    }
 	  }, {
 	    key: 'setCustomer',
@@ -23318,8 +23338,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _createClass(Orders, [{
 	    key: 'create',
-	    value: function create(locationId, serviceType, miscOptions) {
-	      var order = new _order2.default(this.adapter, locationId, serviceType, miscOptions);
+	    value: function create(locationId, serviceType, miscOptions, requestedAt) {
+	      var order = new _order2.default(this.adapter, locationId, serviceType, miscOptions, requestedAt);
 	      return this.adapter.persistCurrentOrder(order);
 	    }
 	  }, {
@@ -23330,17 +23350,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'validate',
 	    value: function validate(orderObj) {
-	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
 	      var body = orderObj.formatForValidation();
-	      body.requested_at = requested_at;
 	      return this.adapter.request('POST', 'orders/validate', body);
 	    }
 	  }, {
 	    key: 'submit',
 	    value: function submit(orderObj, paymentType, card) {
-	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
 	      var body = orderObj.format(paymentType, card);
-	      body.requested_at = requested_at;
 	      return this.adapter.request('POST', 'orders/create', body);
 	    }
 	  }]);
