@@ -10,7 +10,6 @@ describe('Orders', () => {
     configureTestingOrder(Brandibble).then(newOrder => {
       Brandibble.orders.validate(newOrder).then(response => {
         let data = shouldSucceed(response);
-        debugger;
         expect(data).to.be.a('object');
         done();
       });
