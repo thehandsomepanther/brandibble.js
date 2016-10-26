@@ -5506,6 +5506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Order(adapter, location_id) {
 	    var serviceType = arguments.length <= 2 || arguments[2] === undefined ? 'delivery' : arguments[2];
 	    var miscOptions = arguments.length <= 3 || arguments[3] === undefined ? defaultOptions : arguments[3];
+	    var requestedAt = arguments.length <= 4 || arguments[4] === undefined ? ASAP_STRING : arguments[4];
 
 	    _classCallCheck(this, Order);
 
@@ -5514,7 +5515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
-	    this.requestedAt = ASAP_STRING;
+	    this.requestedAt = requestedAt;
 	  }
 
 	  _createClass(Order, [{
