@@ -5501,12 +5501,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	var ASAP_STRING = 'asap';
+	var ISO8601_PATTERN = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
 
 	var Order = function () {
 	  function Order(adapter, location_id) {
 	    var serviceType = arguments.length <= 2 || arguments[2] === undefined ? 'delivery' : arguments[2];
 	    var miscOptions = arguments.length <= 3 || arguments[3] === undefined ? defaultOptions : arguments[3];
-	    var requestedAt = arguments.length <= 4 || arguments[4] === undefined ? ASAP_STRING : arguments[4];
 
 	    _classCallCheck(this, Order);
 
@@ -5515,7 +5515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
-	    this.requestedAt = requestedAt;
+	    this.requestedAt = ASAP_STRING;
 	  }
 
 	  _createClass(Order, [{
@@ -5550,12 +5550,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.requestedAt = ASAP_STRING;
 	        return this.adapter.persistCurrentOrder(this);
 	      } else {
-	        if (Object.prototype.toString.call(timestampOrAsap) === "[object Date]") {
-	          this.requestedAt = timestampOrAsap.toISOString().split('.')[0] + 'Z';
+	        var result = (0, _validate2.default)({ timestamp: timestampOrAsap }, { timestamp: { format: ISO8601_PATTERN } });
+	        if (!result) {
+	          this.requestedAt = timestampOrAsap;
 	          return this.adapter.persistCurrentOrder(this);
 	        }
+	        return Promise.reject(result);
 	      }
-	      return Promise.reject("You passed an invalid argument to setRequestedAt.");
 	    }
 	  }, {
 	    key: 'setCustomer',
@@ -5657,6 +5658,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return {
 	        location_id: this.locationId,
 	        service_type: this.serviceType,
+	        requested_at: this.requestedAt,
 	        cart: this.cart.format()
 	      };
 	    }
@@ -5735,6 +5737,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        customer: this.formatCustomer(),
 	        location_id: this.locationId,
 	        service_type: this.serviceType,
+	        requested_at: this.requestedAt,
 	        cart: this.cart.format(),
 	        include_utensils: include_utensils,
 	        notes_for_store: notes_for_store,
