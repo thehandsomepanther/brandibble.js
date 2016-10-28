@@ -8,6 +8,9 @@ const defaultOptions = {
   tip: 0
 };
 
+const validTimestamp = `${(new Date()).toISOString().split('.')[0]}Z`;
+const invalidTimestamp = new Date();
+
 describe('Order', () => {
   it('can add a LineItem', () => {
     let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
@@ -51,6 +54,16 @@ describe('Order', () => {
     let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     newOrder.setCustomer({customer_id: 123}).then(savedOrder => {
       expect(savedOrder.customer.customer_id).to.exist;
+      done();
+    });
+  });
+
+  it('returns true for valid request at timestamp', done => {
+    let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'delivery');
+    let requestedAtTime = `${(new Date()).toISOString().split('.')[0]}Z`;
+
+    newOrder.setRequestedAt(requestedAtTime).then(order => {
+      expect(newOrder.requestedAt).to.equal(requestedAtTime);
       done();
     });
   });
