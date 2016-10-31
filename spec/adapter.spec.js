@@ -38,7 +38,7 @@ describe('Adapter', () => {
       let requestedAtTime = `${(new Date()).toISOString().split('.')[0]}Z`;
       order.setRequestedAt(requestedAtTime).then(() => {
         Brandibble.adapter.restoreCurrentOrder().then(retrievedOrder => {
-          expect(retrievedOrder.requestedAt).to.equal(order.requestedAt);
+          expect(retrievedOrder.requestedAt).to.equal(requestedAtTime);
           done();
         });
       });

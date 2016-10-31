@@ -23345,8 +23345,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _createClass(Orders, [{
 	    key: 'create',
-	    value: function create(locationId, serviceType, miscOptions, requestedAt) {
-	      var order = new _order2.default(this.adapter, locationId, serviceType, miscOptions, requestedAt);
+	    value: function create(locationId, serviceType, miscOptions) {
+	      var order = new _order2.default(this.adapter, locationId, serviceType, miscOptions);
 	      return this.adapter.persistCurrentOrder(order);
 	    }
 	  }, {
