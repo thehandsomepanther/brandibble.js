@@ -23205,7 +23205,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _createClass(Locations, [{
 	    key: 'index',
-	    value: function index() {
+	    value: function index(lat, lng) {
+	      if (lat && lng) {
+	        return this.adapter.request('GET', 'locations?latitude=' + lat + '&longitude=' + lng);
+	      }
 	      return this.adapter.request('GET', 'locations');
 	    }
 	  }]);
