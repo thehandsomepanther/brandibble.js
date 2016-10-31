@@ -3084,12 +3084,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var customer = serializedOrder.customer;
 	        var address = serializedOrder.address;
 
-	        var order = new _order2.default(_this, locationId, serviceType, miscOptions, requestedAt);
+	        var order = new _order2.default(_this, locationId, serviceType, miscOptions);
 	        if (address) {
 	          order.address = address;
 	        }
 	        if (customer) {
 	          order.customer = customer;
+	        }
+	        if (requestedAt) {
+	          order.requestedAt = requestedAt;
 	        }
 	        _this.currentOrder = order.rehydrateCart(cart);
 	        return _this.currentOrder;
