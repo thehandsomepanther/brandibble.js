@@ -68,6 +68,16 @@ describe('Order', () => {
     });
   });
 
+  it('returns errors for invalid request at timestamp', done => {
+    let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'delivery');
+    let requestedAtTime = new Date();
+
+    newOrder.setRequestedAt(requestedAtTime).catch(errors => {
+      expect(errors).to.have.keys(['timestamp']);
+      done();
+    })
+  });
+
   it('returns errors for invalid customers', done => {
     let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     newOrder.setCustomer({invalidKey: 'hi'}).catch(errors => {
