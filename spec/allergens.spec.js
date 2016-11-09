@@ -4,7 +4,6 @@ describe('Allergens', () => {
   it('exists', () => { expect(Brandibble.allergens).to.exist });
 
   it('can show all allergens', done => {
-    console.log(Brandibble)
     Brandibble.allergens.all().then(response => {
       let data = shouldSucceed(response);
       expect(data).to.be.a('array');
