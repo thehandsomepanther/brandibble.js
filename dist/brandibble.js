@@ -3155,6 +3155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var locationId = serializedOrder.locationId;
 	        var serviceType = serializedOrder.serviceType;
 	        var miscOptions = serializedOrder.miscOptions;
+	        var requestedAt = serializedOrder.requestedAt;
 	        var cart = serializedOrder.cart;
 	        var customer = serializedOrder.customer;
 	        var address = serializedOrder.address;
@@ -3165,6 +3166,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (customer) {
 	          order.customer = customer;
+	        }
+	        if (requestedAt) {
+	          order.requestedAt = requestedAt;
 	        }
 	        _this.currentOrder = order.rehydrateCart(cart);
 	        return _this.currentOrder;
@@ -5570,6 +5574,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  tip: 0
 	};
 
+	var ASAP_STRING = 'asap';
+	var ISO8601_PATTERN = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
+
 	var Order = function () {
 	  function Order(adapter, location_id) {
 	    var serviceType = arguments.length <= 2 || arguments[2] === undefined ? 'delivery' : arguments[2];
@@ -5582,6 +5589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
+	    this.requestedAt = ASAP_STRING;
 	  }
 
 	  _createClass(Order, [{
@@ -5606,6 +5614,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        lineItem.configuration = configuration;
 	      });
 	      return this;
+	    }
+	  }, {
+	    key: 'setRequestedAt',
+	    value: function setRequestedAt() {
+	      var timestampOrAsap = arguments.length <= 0 || arguments[0] === undefined ? ASAP_STRING : arguments[0];
+
+	      if (timestampOrAsap === ASAP_STRING) {
+	        this.requestedAt = ASAP_STRING;
+	        return this.adapter.persistCurrentOrder(this);
+	      } else {
+	        var result = (0, _validate2.default)({ timestamp: timestampOrAsap }, { timestamp: { format: ISO8601_PATTERN } });
+	        if (!result) {
+	          this.requestedAt = timestampOrAsap;
+	          return this.adapter.persistCurrentOrder(this);
+	        }
+	        return Promise.reject(result);
+	      }
 	    }
 	  }, {
 	    key: 'setCustomer',
@@ -5707,6 +5732,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return {
 	        location_id: this.locationId,
 	        service_type: this.serviceType,
+	        requested_at: this.requestedAt,
 	        cart: this.cart.format()
 	      };
 	    }
@@ -5785,6 +5811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        customer: this.formatCustomer(),
 	        location_id: this.locationId,
 	        service_type: this.serviceType,
+	        requested_at: this.requestedAt,
 	        cart: this.cart.format(),
 	        include_utensils: include_utensils,
 	        notes_for_store: notes_for_store,
@@ -23155,17 +23182,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'validate',
 	    value: function validate(orderObj) {
-	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
 	      var body = orderObj.formatForValidation();
-	      body.requested_at = requested_at;
 	      return this.adapter.request('POST', 'orders/validate', body);
 	    }
 	  }, {
 	    key: 'submit',
 	    value: function submit(orderObj, paymentType, card) {
-	      var requested_at = new Date().toISOString().split('.')[0] + 'Z';
 	      var body = orderObj.format(paymentType, card);
-	      body.requested_at = requested_at;
 	      return this.adapter.request('POST', 'orders/create', body);
 	    }
 	  }]);
