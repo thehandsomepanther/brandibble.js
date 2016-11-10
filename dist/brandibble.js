@@ -23162,6 +23162,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function show(customerId) {
 	      return this.adapter.request('GET', 'customers/' + customerId);
 	    }
+	  }, {
+	    key: 'orders',
+	    value: function orders(customerId) {
+	      return this.adapter.request('GET', 'customers/' + customerId + '/orders');
+	    }
 
 	    /* first_name, last_name, email, password, phone:opt */
 
