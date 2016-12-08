@@ -16,7 +16,6 @@ describe('Menus', () => {
   });
 
   it('can build a menu for a location for a specific time', done => {
-    // wake up circle ci
     Brandibble.locations.index().then(response => {
       let data = shouldSucceed(response);
       expect(data).to.be.a('array');
