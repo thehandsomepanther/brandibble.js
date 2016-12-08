@@ -29,10 +29,10 @@ describe('Menus', () => {
       // Brandibble.locations.index().then(response => {
         let data = shouldSucceed(response);
         expect(data).to.be.a('array');
-        let date = new Date().toLocaleString();
+        let date = new Date();
         date.setDate(date.getDate() + 1);
         console.log(date)
-        Brandibble.menus.build(19, 'delivery', date).then(response => {
+        Brandibble.menus.build(19, 'delivery', date.toLocaleString()).then(response => {
           let data = shouldSucceed(response);
           expect(data).to.be.a('object').to.have.property('expires_at');
           let expirationDate = new Date(data.expires_at).toDateString();
