@@ -29,7 +29,7 @@ describe('Menus', () => {
       // Brandibble.locations.index().then(response => {
         let data = shouldSucceed(response);
         expect(data).to.be.a('array');
-        let date = new Date();
+        let date = new Date().toLocaleString();
         date.setDate(date.getDate() + 1);
         console.log(date)
         Brandibble.menus.build(19, 'delivery', date).then(response => {
