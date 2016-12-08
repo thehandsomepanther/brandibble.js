@@ -21,9 +21,10 @@ describe('Adapter', () => {
     }).catch(error => console.log(error));
   })
 
+
   it('can restore currentOrder from localStorage', done => {
     configureTestingOrder(Brandibble).then(order => {
-      Brandibble.adapter.persistCurrentOrder(order).then(() => {
+      Brandibble.adapter.persistCurrentOrder(order).then(persisted => {
         Brandibble.adapter.restoreCurrentOrder().then(retrievedOrder => {
           expect(order).to.deep.equal(retrievedOrder);
           expect(retrievedOrder).to.be.an.instanceof(Brandibble.Order);

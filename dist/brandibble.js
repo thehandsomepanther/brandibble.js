@@ -658,7 +658,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.TestCreditCards = undefined;
+	exports.PaymentTypes = exports.TestCreditCards = undefined;
 	exports.applyPollyfills = applyPollyfills;
 	exports.persist = persist;
 	exports.retrieve = retrieve;
@@ -774,6 +774,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  mastercard: [{ response: 'approval', number: '5454545454545454' }, { response: 'refer_call', number: '5442981111111023' }, { response: 'do_not_honor', number: '5442981111111031' }, { response: 'card_expired', number: '5442981111111049' }, { response: 'insufficient_funds', number: '5442981111111056' }],
 	  amex: [{ response: 'approval', number: '371449635398431' }],
 	  discover: [{ response: 'approval', number: '6011000995500000' }, { response: 'refer_call', number: '6011000995511122' }, { response: 'do_not_honor', number: '6011000995511130' }, { response: 'card_expired', number: '6011000995511148' }, { response: 'insufficient_funds', number: '6011000995511155' }]
+	};
+
+	var PaymentTypes = exports.PaymentTypes = {
+	  CASH: 'cash',
+	  CREDIT: 'credit'
 	};
 
 	// http://stackoverflow.com/posts/8809472/revisions
@@ -3320,6 +3325,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _utils = __webpack_require__(3);
@@ -3343,6 +3350,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    status: 500
 	  }]
 	};
+
+	/* Ensure the only persisted information here is customer_card_id */
+	function sanitizeCreditCard(order) {
+	  if (order.creditCard) {
+	    var customer_card_id = order.creditCard.customer_card_id;
+
+	    if (customer_card_id) {
+	      order.creditCard = { customer_card_id: customer_card_id };
+	    } else {
+	      order.creditCard = null;
+	    }
+	  }
+	  return order;
+	}
 
 	function handleResponse(response) {
 	  var status = response.status,
@@ -3404,18 +3425,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            miscOptions = serializedOrder.miscOptions,
 	            requestedAt = serializedOrder.requestedAt,
 	            cart = serializedOrder.cart,
+	            paymentType = serializedOrder.paymentType,
 	            customer = serializedOrder.customer,
-	            address = serializedOrder.address;
+	            address = serializedOrder.address,
+	            creditCard = serializedOrder.creditCard;
 
-	        var order = new _order2.default(_this, locationId, serviceType, miscOptions);
+
+	        var order = new _order2.default(_this, locationId, serviceType, paymentType, miscOptions);
 	        if (address) {
 	          order.address = address;
 	        }
 	        if (customer) {
 	          order.customer = customer;
 	        }
+	        if (paymentType) {
+	          order.paymentType = paymentType;
+	        }
 	        if (requestedAt) {
 	          order.requestedAt = requestedAt;
+	        }
+	        if (creditCard) {
+	          order.creditCard = creditCard;
 	        }
 	        _this.currentOrder = order.rehydrateCart(cart);
 	        return _this.currentOrder;
@@ -3425,6 +3455,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'persistCurrentOrder',
 	    value: function persistCurrentOrder(order) {
 	      this.currentOrder = order;
+	      /* Ensure raw Credit Card data isn't persisted to localStorage */
+	      if (order.creditCard) {
+	        var _ret = function () {
+	          var creditCardData = Object.assign({}, order.creditCard);
+
+	          return {
+	            v: _localforage2.default.setItem('currentOrder', sanitizeCreditCard(order)).then(function () {
+	              order.creditCard = creditCardData;
+	              return order;
+	            })
+	          };
+	        }();
+
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	      }
 	      return _localforage2.default.setItem('currentOrder', order).then(function () {
 	        return order;
 	      });
@@ -5814,6 +5859,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validate2 = _interopRequireDefault(_validate);
 
+	var _utils = __webpack_require__(3);
+
 	var _validations = __webpack_require__(16);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -5827,21 +5874,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	var ASAP_STRING = 'asap';
+	var CREDIT_CARD_DEFAULT = null;
 	var ISO8601_PATTERN = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
 
 	var Order = function () {
 	  function Order(adapter, location_id) {
 	    var serviceType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'delivery';
-	    var miscOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : defaultOptions;
+	    var paymentType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : _utils.PaymentTypes.CASH;
+	    var miscOptions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : defaultOptions;
 
 	    _classCallCheck(this, Order);
 
 	    this.adapter = adapter;
 	    this.cart = new _cart8.default();
+	    this.creditCard = CREDIT_CARD_DEFAULT;
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
 	    this.requestedAt = ASAP_STRING;
+	    this.paymentType = paymentType;
 	  }
 
 	  _createClass(Order, [{
@@ -5899,6 +5950,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.adapter.persistCurrentOrder(this);
 	      }
 	      return Promise.reject(result);
+	    }
+	  }, {
+	    key: 'setPaymentMethod',
+	    value: function setPaymentMethod() {
+	      var _this2 = this;
+
+	      var paymentType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _utils.PaymentTypes.CASH;
+	      var cardOrCashTip = arguments[1];
+
+	      this.paymentType = paymentType;
+	      return this.adapter.persistCurrentOrder(this).then(function () {
+	        switch (paymentType) {
+	          case _utils.PaymentTypes.CASH:
+	            var tip = cardOrCashTip.tip;
+
+	            _this2.miscOptions.tip = tip;
+	            return _this2.adapter.persistCurrentOrder(_this2);
+	          case _utils.PaymentTypes.CREDIT:
+	            var customer_card_id = cardOrCashTip.customer_card_id;
+
+	            if (customer_card_id) {
+	              _this2.creditCard = { customer_card_id: customer_card_id };
+	              return _this2.adapter.persistCurrentOrder(_this2);
+	            }
+	            /* The user is trying to set a non-persisted card on the order */
+	            var result = (0, _validate2.default)(cardOrCashTip, _validations.cardValidations);
+	            if (!result) {
+	              _this2.creditCard = cardOrCashTip;
+	              /* Important! Don't persist raw card info to LocalStorage */
+	              return Promise.resolve(_this2);
+	            }
+	            return Promise.reject(result);
+	        }
+	      });
 	    }
 	  }, {
 	    key: 'setAddress',
@@ -6033,14 +6118,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'formatCard',
 	    value: function formatCard(card) {
-	      if (!card) {
+	      if (!this.creditCard) {
 	        return {};
 	      }
-	      var customer_card_id = card.customer_card_id,
-	          cc_expiration = card.cc_expiration,
-	          cc_number = card.cc_number,
-	          cc_zip = card.cc_zip,
-	          cc_cvv = card.cc_cvv;
+	      var _creditCard = this.creditCard,
+	          customer_card_id = _creditCard.customer_card_id,
+	          cc_expiration = _creditCard.cc_expiration,
+	          cc_number = _creditCard.cc_number,
+	          cc_zip = _creditCard.cc_zip,
+	          cc_cvv = _creditCard.cc_cvv;
 
 	      if (customer_card_id) {
 	        return { customer_card_id: customer_card_id };
@@ -6050,8 +6136,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'format',
 	    value: function format() {
-	      var payment_type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "cash";
-	      var card = arguments[1];
 	      var _miscOptions = this.miscOptions,
 	          include_utensils = _miscOptions.include_utensils,
 	          notes_for_store = _miscOptions.notes_for_store,
@@ -6067,14 +6151,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        cart: this.cart.format(),
 	        include_utensils: include_utensils,
 	        notes_for_store: notes_for_store,
-	        payment_type: payment_type
+	        payment_type: this.paymentType
 	      };
 
-	      if (payload.payment_type === "credit") {
-	        payload.credit_card = this.formatCard(card);
-	      }
-	      if (payload.payment_type !== "cash") {
-	        payload.tip = tip;
+	      switch (payload.payment_type) {
+	        case _utils.PaymentTypes.CASH:
+	          payload.tip = tip;
+	          break;
+	        case _utils.PaymentTypes.CREDIT:
+	          payload.credit_card = this.formatCard();
+	          break;
 	      }
 
 	      return payload;
@@ -23760,8 +23846,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _createClass(Orders, [{
 	    key: 'create',
-	    value: function create(locationId, serviceType, miscOptions) {
-	      var order = new _order2.default(this.adapter, locationId, serviceType, miscOptions);
+	    value: function create(locationId, serviceType, paymentType, miscOptions) {
+	      var order = new _order2.default(this.adapter, locationId, serviceType, paymentType, miscOptions);
 	      return this.adapter.persistCurrentOrder(order);
 	    }
 	  }, {
@@ -23783,8 +23869,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'submit',
-	    value: function submit(orderObj, paymentType, card) {
-	      var body = orderObj.format(paymentType, card);
+	    value: function submit(orderObj) {
+	      var body = orderObj.format();
 	      return this.adapter.request('POST', 'orders/create', body);
 	    }
 	  }]);
