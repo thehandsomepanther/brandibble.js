@@ -28,7 +28,7 @@ describe('Menus', () => {
         expect(expirationDate).to.equal(date.toDateString());
         done();
       }).catch(error => console.log(error.errors[0].code));
-    });
+    }).catch(error => console.log(error.errors[0].code));
   });
 
   it('can not build a menu for a location when the service in not enabled', done => {
