@@ -60,8 +60,8 @@ describe('Order', () => {
 
   it('can set location id', done => {
     let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
-    newOrder.setLocation({location_id: 19}).then(savedOrder => {
-      expect(savedOrder.location_id).to.equal(19);
+    newOrder.setLocation(19).then(savedOrder => {
+      expect(savedOrder.locationId).to.equal(19);
       done();
     });
   });

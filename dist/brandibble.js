@@ -5666,9 +5666,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'setLocation',
-	    value: function setLocation(id) {
-	      this.location_id = id;
-	      return this.adapter.persistCurrentOrder(this);
+	    value: function setLocation() {
+	      var id = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+	      if (id) {
+	        this.locationId = id;
+	        return this.adapter.persistCurrentOrder(this);
+	      }
+	      return Promise.reject();
 	    }
 	  }, {
 	    key: 'isValid',
