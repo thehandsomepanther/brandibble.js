@@ -58,6 +58,14 @@ describe('Order', () => {
     });
   });
 
+  it('can set location id', done => {
+    let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    newOrder.setLocation({location_id: 19}).then(savedOrder => {
+      expect(savedOrder.location_id).to.equal(19);
+      done();
+    });
+  });
+
   it('returns true for valid request at timestamp', done => {
     let newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'delivery');
     let requestedAtTime = `${(new Date()).toISOString().split('.')[0]}Z`;
