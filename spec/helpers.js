@@ -1,3 +1,5 @@
+import { PaymentTypes } from '../lib/utils';
+
 export const TestingUser = {
   first_name: 'Sanctuary',
   last_name: 'Testing',
@@ -41,7 +43,7 @@ export function shouldError(response) {
   return response.errors;
 }
 
-export function configureTestingOrder(Brandibble, customer, address) {
+export function configureTestingOrder(Brandibble, customer, address, cardOrCashTip) {
   return Brandibble.locations.index().then(response => {
     let data = shouldSucceed(response);
     expect(data).to.be.a('array');
@@ -77,6 +79,7 @@ export function configureTestingOrder(Brandibble, customer, address) {
 
             if (customer) { promises.push(newOrder.setCustomer(customer)); }
             if (address) { promises.push(newOrder.setAddress(address)); }
+            if (cardOrCashTip) { promises.push(newOrder.setPaymentMethod(PaymentTypes.CREDIT, cardOrCashTip)); }
 
             return Promise.all(promises).then(() => newOrder);
           });
