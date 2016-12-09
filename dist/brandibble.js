@@ -5874,7 +5874,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	var ASAP_STRING = 'asap';
-	var CREDIT_CARD_DEFAULT = null;
 	var ISO8601_PATTERN = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
 
 	var Order = function () {
@@ -5887,7 +5886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    this.adapter = adapter;
 	    this.cart = new _cart8.default();
-	    this.creditCard = CREDIT_CARD_DEFAULT;
+	    this.creditCard = null;
 	    this.locationId = location_id;
 	    this.serviceType = serviceType;
 	    this.miscOptions = miscOptions;
@@ -6128,7 +6127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'formatCard',
-	    value: function formatCard(card) {
+	    value: function formatCard() {
 	      if (!this.creditCard) {
 	        return {};
 	      }
