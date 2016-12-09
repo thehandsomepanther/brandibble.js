@@ -1,3 +1,4 @@
+import moment from 'moment-timezone';
 import { buildRef, shouldSucceed, shouldError } from './helpers';
 
 describe('Menus', () => {
@@ -31,8 +32,9 @@ describe('Menus', () => {
         expect(data).to.be.a('array');
         let date = new Date();
         date.setDate(date.getDate() + 1);
+        date = moment(date).tz('America/New_York').toDate();
         console.log(date)
-        Brandibble.menus.build(19, 'delivery', date.toLocaleString()).then(response => {
+        Brandibble.menus.build(19, 'delivery', date).then(response => {
           let data = shouldSucceed(response);
           expect(data).to.be.a('object').to.have.property('expires_at');
           let expirationDate = new Date(data.expires_at).toDateString();
