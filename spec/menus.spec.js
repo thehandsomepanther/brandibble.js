@@ -1,10 +1,20 @@
+import moment from 'moment-timezone';
 import { buildRef, shouldSucceed, shouldError } from './helpers';
 
 describe('Menus', () => {
   it('exists', () => { expect(Brandibble.menus).to.exist });
 
-  it('can build a menu for a location', done => {
-    Brandibble.locations.index().then(response => {
+  describe('building a menu', () => {
+    let response;
+
+    before(done => {
+      Brandibble.locations.index().then(res => {
+        response = res;
+        done();
+      });
+    });
+
+    it('can build a menu for a location', done => {
       let data = shouldSucceed(response);
       expect(data).to.be.a('array');
       Brandibble.menus.build(data[0].location_id, 'pickup').then(response => {
@@ -13,13 +23,12 @@ describe('Menus', () => {
         done();
       }).catch(error => console.log(error.errors[0].code));
     });
-  });
 
-  it('can build a menu for a location for a specific time', done => {
-    Brandibble.locations.index().then(response => {
+    it('can build a menu for a location for a specific time', done => {
       let data = shouldSucceed(response);
       expect(data).to.be.a('array');
       let date = new Date();
+      date = moment(date).tz('America/New_York').toDate();
       date.setDate(date.getDate() + 1);
       Brandibble.menus.build(19, 'delivery', date).then(response => {
         let data = shouldSucceed(response);
@@ -29,10 +38,8 @@ describe('Menus', () => {
         done();
       }).catch(error => console.log(error.errors[0].code));
     });
-  });
 
-  it('can not build a menu for a location when the service in not enabled', done => {
-    Brandibble.locations.index().then(response => {
+    it('can not build a menu for a location when the service in not enabled', done => {
       let data = shouldSucceed(response);
       expect(data).to.be.a('array');
       Brandibble.menus.build(data[0].location_id, 'delivery').catch(response => {

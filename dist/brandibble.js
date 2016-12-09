@@ -6002,6 +6002,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return Promise.reject(result);
 	    }
 	  }, {
+	    key: 'setLocation',
+	    value: function setLocation() {
+	      var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+	      if (id) {
+	        this.locationId = id;
+	        return this.adapter.persistCurrentOrder(this);
+	      }
+	      return Promise.reject('Location ID cannot be blank');
+	    }
+	  }, {
 	    key: 'isValid',
 	    value: function isValid() {
 	      return this.cart.isValid();
