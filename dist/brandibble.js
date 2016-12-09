@@ -5673,7 +5673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.locationId = id;
 	        return this.adapter.persistCurrentOrder(this);
 	      }
-	      return Promise.reject();
+	      return Promise.reject('Location ID cannot be blank');
 	    }
 	  }, {
 	    key: 'isValid',
