@@ -13,11 +13,12 @@ module.exports = {
   },
   resolve: {
     root: path.resolve(__dirname),
-    extensions: ['', '.js'],
+    extensions: ['', '.js', '.json'],
     alias: { brandibble: 'lib' }
   },
   module: {
     loaders: [
+      {include: /\.json$/, loaders: ["json-loader"]},
       {
         test: /\.js/,
         exclude: /node_modules/,
