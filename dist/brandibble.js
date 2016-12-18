@@ -5849,6 +5849,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _cart7 = __webpack_require__(13);
@@ -6019,12 +6021,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'addLineItem',
 	    value: function addLineItem() {
-	      var _cart;
+	      var _this3 = this,
+	          _arguments = arguments;
 
-	      var lineItem = (_cart = this.cart).addLineItem.apply(_cart, arguments);
-	      return this.adapter.persistCurrentOrder(this).then(function () {
-	        return lineItem;
-	      });
+	      if (this.locationId) {
+	        var _ret = function () {
+	          var _cart;
+
+	          var lineItem = (_cart = _this3.cart).addLineItem.apply(_cart, _arguments);
+	          return {
+	            v: _this3.adapter.persistCurrentOrder(_this3).then(function () {
+	              return lineItem;
+	            })
+	          };
+	        }();
+
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	      }
+	      return Promise.reject('Location ID cannot be blank');
 	    }
 	  }, {
 	    key: 'addOptionToLineItem',
