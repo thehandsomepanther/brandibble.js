@@ -165,7 +165,24 @@ describe('Customers', () => {
         expect(data[0]).to.have.property('items');
         expect(data[0]).to.have.property('orders_id');
         done();
-      })
-    })
+      });
+    });
+  });
+
+  it('can retrieve a users upcoming orders', done => {
+    Brandibble.customers.authenticate({
+      email: 'sanctuary-testing-customer@example.com',
+      password: 'password'
+    }).then(response => {
+      let customerId = response.data.customer_id;
+      Brandibble.customers.orders(customerId, {status:'upcoming'}).then(response => {
+        let data = shouldSucceed(response);
+        expect(data).to.be.array;
+        expect(data[0]).to.have.property('address');
+        expect(data[0]).to.have.property('items');
+        expect(data[0]).to.have.property('orders_id');
+        done();
+      });
+    });
   });
 });
