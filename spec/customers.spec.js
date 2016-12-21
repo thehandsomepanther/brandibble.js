@@ -178,9 +178,6 @@ describe('Customers', () => {
       Brandibble.customers.orders(customerId, {status:'upcoming'}).then(response => {
         let data = shouldSucceed(response);
         expect(data).to.be.array;
-        expect(data[0]).to.have.property('address');
-        expect(data[0]).to.have.property('items');
-        expect(data[0]).to.have.property('orders_id');
         done();
       });
     });
