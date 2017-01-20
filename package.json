@@ -1,6 +1,6 @@
 {
   "name": "brandibble",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "API Wrapper for Brandibble.co",
   "repository": "https://github.com/sanctuarycomputer/brandibble.js",
   "main": "dist/brandibble.js",
