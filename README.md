@@ -8,12 +8,14 @@ fetch library).
 
 ```js
 import Brandibble from 'brandibble';
+import localforage from 'localforage'; // or another storage library
 
 // Build a global Brandibble Ref
-
+localforage.config({name: 'sanctu', storeName: 'compu'});
 let BrandibbleRef = new Brandibble({
   apiKey: '12345',
-  brandId: 23
+  brandId: 23,
+  storage: localforage,
 });
 
 // You'll need to set it up like so:
