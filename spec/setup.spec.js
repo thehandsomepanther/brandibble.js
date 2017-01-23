@@ -1,7 +1,9 @@
 import Brandibble from '..';
+import localforage from 'localforage';
 import { shouldSucceed, TestingUser, TestingAddress, UnsecureApiKey } from './helpers';
 const { email, password } = TestingUser;
 
+localforage.config({name: 'brandibble-test', storeName: 'brandibble-test'});
 
 function ensureCustomerResourcesExist() {
   return window.Brandibble.customers.authenticate({ email, password }).then(() => {
@@ -18,7 +20,8 @@ before(done => {
   let BrandibbleRef = new Brandibble({
     apiKey: UnsecureApiKey,
     brandId: 6,
-    apiEndpoint: 'https://staging.brandibble.co/api/'
+    apiEndpoint: 'https://staging.brandibble.co/api/',
+    storage: localforage,
   });
 
   return BrandibbleRef.setup().then(BrandibbleRef => {
