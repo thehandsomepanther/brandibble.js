@@ -23,6 +23,24 @@ describe('Addresses', () => {
     });
   });
 
+  it('can delete an existing address', done => {
+    const { email, password } = TestingUser;
+    Brandibble.customers.authenticate({
+      email,
+      password
+    }).then(response => {
+      let data = shouldSucceed(response);
+      Brandibble.addresses.all().then(response => {
+        let addressToDelete = response.data[0];
+        let { customer_address_id } = addressToDelete;
+        Brandibble.addresses.delete(customer_address_id).then(response => {
+          expect(response).to.be.true;
+          done();
+        });
+      });
+    });
+  });
+
   it('will fail when there is no current customer', done => {
     Brandibble.addresses.all().catch(response => {
       let errors = shouldError(response);
