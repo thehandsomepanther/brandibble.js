@@ -2,7 +2,7 @@ export default {
   "allergen_classes": "",
   "allergens": "",
   "category_id": 108,
-  "pickup_days": null,
+  "delivery_days": null,
   "description": "Charred chicken marinated w/ lemon, fennel seeds, and mustard seeds.",
   "display_options": 0,
   "end_date": null,
@@ -38,7 +38,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Long grain brown rice tossed with a touch of thyme olive oil, red onions, lime juice and fresh parsley. ",
           "end_date": null,
           "group_id": 63,
@@ -78,7 +78,7 @@ export default {
         {
           "allergen_classes": "allergen-gluten",
           "allergens": "Gluten",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Quinoa, bulgur wheat, cucumber, kale stems, and parsley. Vegan.",
           "end_date": null,
           "group_id": 63,
@@ -118,7 +118,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "",
           "end_date": null,
           "group_id": 63,
@@ -146,7 +146,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "",
           "end_date": null,
           "group_id": 63,
@@ -187,7 +187,7 @@ export default {
         {
           "allergen_classes": "allergen-gluten allergen-dairy",
           "allergens": "Gluten, Dairy",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Ithaca Milk, rBGH-free three cheese blend, whole wheat pasta, roasted cauliflower, panko bread crumb. Contains dairy.",
           "end_date": null,
           "group_id": 64,
@@ -227,7 +227,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Chunked and then roasted, our sweet potatoes are dressed with a a house-made fresh rosemary & EVOO blend. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -267,7 +267,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Simply sautéed cauliflower with preserved lemon and thyme. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -307,7 +307,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Local kale, roasted garlic, tomato, and pepper. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -347,7 +347,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Charred broccoli, chilled and tossed with roasted garlic and toasted almonds. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -375,7 +375,7 @@ export default {
         {
           "allergen_classes": "allergen-dairy",
           "allergens": "Dairy",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Baby bok choy, spiced sweet corn, roasted red pepper, radish, and yogurt ranch dressing. Gluten-free. Contains dairy.",
           "end_date": null,
           "group_id": 64,
@@ -415,7 +415,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Murasaki sweet potato, cucumber, chioggia beet, and hijiki dressing. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -455,7 +455,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Local cantaloupe, lime, cilantro, and wild purslane. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -495,7 +495,7 @@ export default {
         {
           "allergen_classes": "allergen-honey",
           "allergens": "Honey",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Black kale salad with horseradish pickled beets and crunchy toasted buckwheat groats. Vegan. Gluten-free.",
           "end_date": null,
           "group_id": 64,
@@ -535,7 +535,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "",
           "end_date": null,
           "group_id": 64,
@@ -575,7 +575,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Avocado w/ extra virgin olive oil, salt and pepper",
           "end_date": null,
           "group_id": 64,
@@ -616,7 +616,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "",
           "end_date": null,
           "group_id": 74,
@@ -657,7 +657,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "",
           "end_date": null,
           "group_id": 76,
@@ -697,7 +697,7 @@ export default {
         {
           "allergen_classes": "",
           "allergens": "",
-          "pickup_days": null,
+          "delivery_days": null,
           "description": "Avocado with extra virgin olive oil, salt and pepper.",
           "end_date": null,
           "group_id": 76,
