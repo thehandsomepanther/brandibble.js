@@ -1,8 +1,8 @@
 export default {
   "city": "New York",
   "cross_streets": "Between 112th and 113th",
-  "delivery_minimum": 10,
-  "delivery_zone": [
+  "pickup_minimum": 10,
+  "pickup_zone": [
     [
       40.810981,
       -73.964099
@@ -24,14 +24,14 @@ export default {
       -73.964099
     ]
   ],
-  "delivery_zone_description": "108th to 120th, Riverside to Amsterdam",
+  "pickup_zone_description": "108th to 120th, Riverside to Amsterdam",
   "description": "<p>Serves Marketplates, Salads, Brew Lab Iced Teas, Cold-Pressed Juices as well as Butcher Block, Grill, Saute and CrockPot Specials. Walkable from Columbia University.</p>",
   "directions_url": "https://goo.gl/maps/QpT4M",
   "distance": 100,
   "fax_number": null,
-  "has_delivery": false,
+  "has_pickup": false,
   "has_pickup": true,
-  "hours_delivery": [],
+  "hours_pickup": [],
   "hours_description": "<p>Monday - Sunday 11am to 10pm</p>",
   "hours_for_week": [
     {
@@ -106,7 +106,7 @@ export default {
     "11:00 AM",
     "10:00 PM"
   ],
-  "in_delivery_zone": false,
+  "in_pickup_zone": false,
   "is_coming_soon": false,
   "is_new": false,
   "is_open": true,
