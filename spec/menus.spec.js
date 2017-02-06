@@ -30,7 +30,7 @@ describe('Menus', () => {
       let date = new Date();
       date = moment(date).tz('America/New_York').toDate();
       date.setDate(date.getDate() + 1);
-      Brandibble.menus.build(19, 'pickup', date).then(response => {
+      Brandibble.menus.build(19, 'delivery', date).then(response => {
         let data = shouldSucceed(response);
         expect(data).to.be.a('object').to.have.property('expires_at');
         let expirationDate = new Date(data.expires_at).toDateString();
