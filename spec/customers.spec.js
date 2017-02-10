@@ -62,19 +62,23 @@ describe('Customers', () => {
   });
 
   it('can authenticate the client with a current customer', done => {
-    Brandibble.customers.authenticate({
-      email: 'sanctuary-testing-customer@example.com',
-      password: 'password'
-    }).then(response => {
-      let data = shouldSucceed(response);
-      expect(data).to.have.property('email', 'sanctuary-testing-customer@example.com');
+    Brandibble.customers.invalidate().then(() => {
+      expect(Brandibble.adapter.customerToken).to.not.exist;
 
-      // Customer Token is set in local storage
-      expect(Brandibble.adapter.customerToken).to.be.a('string');
+      Brandibble.customers.authenticate({
+        email: 'sanctuary-testing-customer@example.com',
+        password: 'password'
+      }).then(response => {
+        let data = shouldSucceed(response);
+        expect(data).to.have.property('email', 'sanctuary-testing-customer@example.com');
 
-      Brandibble.customers.invalidate().then(() => {
-        expect(Brandibble.adapter.customerToken).to.not.exist;
-        done();
+        // Customer Token is set in local storage
+        expect(Brandibble.adapter.customerToken).to.be.a('string');
+
+        Brandibble.customers.invalidate().then(() => {
+          expect(Brandibble.adapter.customerToken).to.not.exist;
+          done();
+        });
       });
     });
   });
