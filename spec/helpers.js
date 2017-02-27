@@ -20,7 +20,7 @@ export const TestingAddress = {
   contact_phone: '5512213610'
 };
 
-export const UnsecureApiKey = '***REMOVED***';
+export const UnsecureApiKey = process.env.API_KEY;
 
 export function seedEmail() {
   return `sanctuary-testing-${(new Date()).valueOf().toString()}@example.com`;
