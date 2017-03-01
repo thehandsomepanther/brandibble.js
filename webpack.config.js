@@ -3,7 +3,6 @@ const path = require('path');
 
 module.exports = {
   entry: [
-    './node_modules/babel-polyfill/dist/polyfill.js',
     'whatwg-fetch',
     './lib/brandibble',
   ],
