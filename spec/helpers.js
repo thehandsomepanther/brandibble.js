@@ -1,10 +1,11 @@
+/* global expect */
 import { PaymentTypes } from '../lib/utils';
 
 export const TestingUser = {
   first_name: 'Sanctuary',
   last_name: 'Testing',
   email: 'sanctuary-testing-customer@example.com',
-  password: 'password'
+  password: 'password',
 };
 
 export const TestingAddress = {
@@ -17,10 +18,10 @@ export const TestingAddress = {
   longitude: -73.9709333,
   company: 'Sanctuary Computer, Inc.',
   contact_name: 'Hugh Francis',
-  contact_phone: '5512213610'
+  contact_phone: '5512213610',
 };
 
-export const UnsecureApiKey = '***REMOVED***';
+export const UnsecureApiKey = process.env.BRANDIBBLE_API_KEY;
 
 export function seedEmail() {
   return `sanctuary-testing-${(new Date()).valueOf().toString()}@example.com`;
@@ -43,48 +44,46 @@ export function shouldError(response) {
   return response.errors;
 }
 
-export function configureTestingOrder(Brandibble, customer, address, cardOrCashTip) {
-  return Brandibble.locations.index().then(response => {
-    let data = shouldSucceed(response);
-    expect(data).to.be.a('array');
+export async function configureTestingOrder(Brandibble, customer, address, cardOrCashTip) {
+  let response = await Brandibble.locations.index();
+  let data = shouldSucceed(response);
+  expect(data).to.be.a('array');
 
-    let serviceType = 'pickup';
-    let location = data[0];
-    expect(location.name).to.equal('Columbia');
+  const serviceType = 'pickup';
+  const location = data[0];
+  expect(location.name).to.equal('Columbia');
 
-    return Brandibble.menus.build(location.location_id, serviceType).then(response => {
-      let data = shouldSucceed(response);
-      expect(data).to.be.a('object');
-      expect(data.menu).to.be.a('array');
+  response = await Brandibble.menus.build(location.location_id, serviceType);
+  data = shouldSucceed(response);
+  expect(data).to.be.a('object');
+  expect(data.menu).to.be.a('array');
 
-      return Brandibble.orders.create(location.location_id, serviceType).then(newOrder => {
-        let product  = data.menu[0].children[0].items[0];
-        return newOrder.addLineItem(product, 1).then(lineItem => {
 
-          expect(lineItem.product.name).to.equal('Charred Chicken');
-          expect(lineItem.isValid()).to.equal(false);
-          expect(newOrder.cart.isValid()).to.equal(false);
+  const newOrder = await Brandibble.orders.create(location.location_id, serviceType);
+  const product = data.menu[0].children[0].items[0];
+  const lineItem = await newOrder.addLineItem(product, 1);
 
-          let bases = lineItem.optionGroups()[0];
-          let sides = lineItem.optionGroups()[1];
+  expect(lineItem.product.name).to.equal('Charred Chicken');
+  expect(lineItem.isValid()).to.equal(false);
+  expect(newOrder.cart.isValid()).to.equal(false);
 
-          return Promise.all([
-            newOrder.addOptionToLineItem(lineItem, bases, bases.option_items[0]),
-            newOrder.addOptionToLineItem(lineItem, sides, sides.option_items[0])
-          ]).then(() => {
-            expect(lineItem.isValid()).to.equal(true);
-            expect(newOrder.cart.isValid()).to.equal(true);
+  const bases = lineItem.optionGroups()[0];
+  const sides = lineItem.optionGroups()[1];
 
-            let promises = [];
+  await Promise.all([
+    newOrder.addOptionToLineItem(lineItem, bases, bases.option_items[0]),
+    newOrder.addOptionToLineItem(lineItem, sides, sides.option_items[0]),
+  ]);
 
-            if (customer) { promises.push(newOrder.setCustomer(customer)); }
-            if (address) { promises.push(newOrder.setAddress(address)); }
-            if (cardOrCashTip) { promises.push(newOrder.setPaymentMethod(PaymentTypes.CREDIT, cardOrCashTip)); }
+  expect(lineItem.isValid()).to.equal(true);
+  expect(newOrder.cart.isValid()).to.equal(true);
+  const promises = [];
 
-            return Promise.all(promises).then(() => newOrder);
-          });
-        });
-      });
-    });
-  });
+  if (customer) { promises.push(newOrder.setCustomer(customer)); }
+  if (address) { promises.push(newOrder.setAddress(address)); }
+  if (cardOrCashTip) { promises.push(newOrder.setPaymentMethod(PaymentTypes.CREDIT, cardOrCashTip)); }
+
+  await Promise.all(promises);
+
+  return newOrder;
 }

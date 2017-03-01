@@ -3,32 +3,37 @@ const path = require('path');
 
 module.exports = {
   entry: [
+    './node_modules/babel-polyfill/dist/polyfill.js',
     'whatwg-fetch',
-    './lib/brandibble'
+    './lib/brandibble',
   ],
   output: {
-    path: __dirname + '/dist',
-    filename: "brandibble.js",
-    libraryTarget: 'umd'
+    path: path.join(__dirname, 'dist'),
+    filename: 'brandibble.js',
+    libraryTarget: 'umd',
   },
   resolve: {
-    root: path.resolve(__dirname),
-    extensions: ['', '.js', '.json'],
-    alias: { brandibble: 'lib' }
+    modules: [
+      'node_modules',
+      path.resolve(__dirname),
+    ],
+    extensions: ['.js'],
+    alias: { brandibble: 'lib' },
   },
   module: {
-    loaders: [
-      {include: /\.json$/, loaders: ["json-loader"]},
+    rules: [
       {
         test: /\.js/,
         exclude: /node_modules/,
-        loader: 'babel',
-        query: {
-          presets: ['es2015'],
-          plugins: []
-        }
-      }
-    ]
+        include: [
+          path.join(__dirname, 'lib'),
+          path.join(__dirname, 'spec'),
+        ],
+        use: ['babel-loader', 'eslint-loader'],
+      },
+    ],
   },
-  plugins: []
+  plugins: [
+    new webpack.EnvironmentPlugin(['BRANDIBBLE_API_KEY']),
+  ],
 };
