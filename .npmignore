@@ -3,3 +3,8 @@ lib/
 spec/
 .babelrc
 .eslintrc
+circle.yml
+.eslintrc
+.editorconfig
+karma.conf.js
+webpack.config.js
