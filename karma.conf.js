@@ -1,23 +1,25 @@
-const webpack         = require('webpack');
-const webpackConfig   = require('./webpack.config');
+const webpackConfig = require('./webpack.config');
+
 webpackConfig.devtool = 'inline-source-map';
 
-module.exports = function (config) {
+module.exports = (config) => {
   config.set({
-    browsers: process.env.CI ? ['Chrome'] : ['Chrome', 'Safari'],
+    browsers: ['Chrome'],
     singleRun: !!process.env.CI,
     frameworks: ['mocha', 'chai'],
-    files: ['spec/**/*.spec.js'],
+    files: [
+      'spec/**/*.spec.js',
+    ],
     plugins: [
-      'karma-safari-launcher',
+      'karma-babel-preprocessor',
       'karma-chrome-launcher',
       'karma-chai',
       'karma-mocha',
       'karma-sourcemap-loader',
-      'karma-webpack'
+      'karma-webpack',
     ],
     preprocessors: {
-      'spec/**/*.spec.js': [ 'webpack', 'sourcemap' ] 
+      'spec/**/*.spec.js': ['babel', 'webpack', 'sourcemap'],
     },
     colors: true,
     logLevel: config.LOG_INFO,
@@ -27,8 +29,8 @@ module.exports = function (config) {
     client: {
       mocha: {
         timeout: 5000,
-        reporter: 'html'
-      } 
-    }
+        reporter: 'html',
+      },
+    },
   });
 };
