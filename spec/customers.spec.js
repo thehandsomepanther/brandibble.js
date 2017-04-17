@@ -137,6 +137,32 @@ describe('Customers', () => {
     });
   });
 
+  it('can check for qr code from levelup', () => {
+    return Brandibble.customers.authenticate({
+      email: 'sanctuary-testing-customer@example.com',
+      password: 'password',
+    }).then(() => {
+      return Brandibble.customers.currentLevelUpQRCode().catch((response) => {
+        const errors = shouldError(response);
+        expect(errors).to.have.lengthOf(1);
+        expect(errors[0]).to.have.property('code', 'customers.levelup.qr_code.show.missing_token');
+      });
+    });
+  });
+
+  it('can check for loyalty from levelup', () => {
+    return Brandibble.customers.authenticate({
+      email: 'sanctuary-testing-customer@example.com',
+      password: 'password',
+    }).then(() => {
+      return Brandibble.customers.currentLevelUpLoyalty().catch((response) => {
+        const errors = shouldError(response);
+        expect(errors).to.have.lengthOf(1);
+        expect(errors[0]).to.have.property('code', 'customers.levelup.loyalty.show.missing_token');
+      });
+    });
+  });
+
   it('can retrieve a users orders', async function () {
     this.timeout(10000);
     const response = await Brandibble.customers.authenticate({
