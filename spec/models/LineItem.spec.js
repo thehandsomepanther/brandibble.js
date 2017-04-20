@@ -3,6 +3,23 @@
 import productJSON from './../product.stub';
 
 describe('LineItem', () => {
+  it('can add option and increase quantity of option items', () => {
+    const lineItem = new Brandibble.LineItem(productJSON, 1);
+    const sides = lineItem.optionGroups()[1];
+    lineItem.addOption(sides, sides.option_items[0]);
+    lineItem.addOption(sides, sides.option_items[0]);
+    expect(lineItem.configuration[0].optionItems).to.have.length.of(2);
+  });
+
+  it('can remove option and decrease quantity of option items', () => {
+    const lineItem = new Brandibble.LineItem(productJSON, 1);
+    const sides = lineItem.optionGroups()[1];
+    lineItem.addOption(sides, sides.option_items[0]);
+    lineItem.addOption(sides, sides.option_items[0]);
+    lineItem.removeOption(sides.option_items[0]);
+    expect(lineItem.configuration[0].optionItems).to.have.length.of(1);
+  });
+
   it('handles validity', () => {
     const lineItem = new Brandibble.LineItem(productJSON, 1);
     expect(lineItem.isValid()).to.equal(false);
