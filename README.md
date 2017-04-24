@@ -159,8 +159,9 @@ newOrder.setCard(card);
 BrandibbleRef.orders.submit(newOrder);
 ```
 
-There are only two methods that you can do on an Order:
+There are only three methods that you can do on an Order:
 
+- `Brandibble.orders.validateCart(BrandibbleOrderModel)`
 - `Brandibble.orders.validate(BrandibbleOrderModel)`
 - `Brandibble.orders.submit(BrandibbleOrderModel)`
 
