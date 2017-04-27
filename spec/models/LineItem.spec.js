@@ -1,6 +1,6 @@
 /* global Brandibble expect it describe beforeEach */
 /* eslint no-new:1 */
-import productJSON from './../product.stub';
+import productJSON from '../stubs/product.stub';
 
 let bases;
 let lineItem;
@@ -52,6 +52,12 @@ describe('models/lineItem', () => {
     lineItem.addOption(bases, bases.option_items[0]);
     lineItem.addOption(sides, sides.option_items[0]);
     expect(lineItem.format()).to.contain.all.keys(['id', 'made_for', 'instructions', 'quantity', 'option_groups']);
+  });
+
+  it('can format itself for favorites', () => {
+    lineItem.addOption(bases, bases.option_items[0]);
+    lineItem.addOption(sides, sides.option_items[0]);
+    expect(lineItem.formatForFavorites()).to.contain.all.keys(['id', 'made_for', 'instructions', 'option_groups']);
   });
 
   it('it can not violate an option rule', () => {
