@@ -1,9 +1,9 @@
 /* global Brandibble expect it describe */
-import productJSON from './../product.stub';
-import locationJSON from './../location.stub';
+import productJSON from '../stubs/product.stub';
+import locationJSON from '../stubs/location.stub';
 import { TestingAddress } from '../helpers';
 
-describe('Order', () => {
+describe('models/order', () => {
   it('can add a LineItem', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     newOrder.addLineItem(productJSON);
