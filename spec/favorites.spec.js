@@ -55,13 +55,25 @@ describe('Favorites', () => {
     });
   });
 
-  describe('can build line item against menu', () => {
+  describe('can build line item against valid menu', () => {
+    let lineItemFromFavorite;
     before(() => {
-      const lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(validFavoriteForOrder, menuStub);
+      lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(validFavoriteForOrder, menuStub);
     });
 
     it('should be a lineItem object', () => {
       expect(lineItemFromFavorite).to.be.a('object');
+    });
+  });
+
+  describe('fails to build line item against menu', () => {
+    let lineItemFromFavorite;
+    before(() => {
+      lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(invalidFavoriteForOrder, menuStub);
+    });
+
+    it('lineItemFromFavorite should be undefined', () => {
+      expect(lineItemFromFavorite).to.be.an('undefined');
     });
   });
 
