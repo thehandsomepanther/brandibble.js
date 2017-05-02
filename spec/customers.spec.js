@@ -1,5 +1,5 @@
 /* global Brandibble expect it describe beforeEach window */
-import { seedEmail, seedText, shouldSucceed, shouldError } from './helpers';
+import { seedEmail, seedText, shouldSucceed, shouldError, OrdersTestingUser } from './helpers';
 
 describe('Customers', () => {
   beforeEach(() => window.localStorage.clear());
@@ -166,13 +166,12 @@ describe('Customers', () => {
   it('can retrieve a users orders', async function () {
     this.timeout(10000);
     const response = await Brandibble.customers.authenticate({
-      email: 'sanctuary-testing-customer@example.com',
+      email: 'sanctuary-orders-testing-customer@example.com',
       password: 'password',
     });
     const { customer_id } = response.data;
     const data = await Brandibble.customers.orders(customer_id);
     const orders = await shouldSucceed(data);
-
     expect(orders).to.be.array;
     expect(orders[0]).to.have.property('address');
     expect(orders[0]).to.have.property('items');
@@ -182,10 +181,8 @@ describe('Customers', () => {
 
   it('can retrieve a users upcoming orders', async function () {
     this.timeout(10000);
-    const response = await Brandibble.customers.authenticate({
-      email: 'sanctuary-testing-customer@example.com',
-      password: 'password',
-    });
+    const { email, password } = OrdersTestingUser;
+    const response = await Brandibble.customers.authenticate({ email, password });
     const { customer_id } = response.data;
     const data = await Brandibble.customers.orders(customer_id, { status: 'upcoming' });
     const orders = await shouldSucceed(data);
