@@ -1,6 +1,8 @@
 /* global Brandibble expect it describe before */
 /* eslint no-shadow: 1 */
 import productJSON from './stubs/product.stub';
+import menuStub from './stubs/menu.stub';
+import { validFavoriteForOrder, invalidFavoriteForOrder } from './stubs/favorite.stub';
 import { TestingUser } from './helpers';
 
 describe('Favorites', () => {
@@ -50,6 +52,28 @@ describe('Favorites', () => {
 
     it('should contain favorite objects', () => {
       expect(favorites[0]).to.include.keys('name', 'favorite_item_id', 'menu_item_json');
+    });
+  });
+
+  describe('can build line item against valid menu', () => {
+    let lineItemFromFavorite;
+    before(() => {
+      lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(validFavoriteForOrder, menuStub);
+    });
+
+    it('should be a lineItem object', () => {
+      expect(lineItemFromFavorite).to.be.a('object');
+    });
+  });
+
+  describe('fails to build line item against menu', () => {
+    let lineItemFromFavorite;
+    before(() => {
+      lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(invalidFavoriteForOrder, menuStub);
+    });
+
+    it('lineItemFromFavorite should be undefined', () => {
+      expect(lineItemFromFavorite).to.be.an('undefined');
     });
   });
 
