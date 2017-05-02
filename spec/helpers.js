@@ -8,6 +8,15 @@ export const TestingUser = {
   password: 'password',
 };
 
+// This user record is only used in the Customers.spec.js for requesting orders
+// as the main test customer has so many records the test bombs out.
+export const OrdersTestingUser = {
+  first_name: 'Sanctuary',
+  last_name: 'Testing',
+  email: 'sanctuary-orders-testing-customer@example.com',
+  password: 'password',
+};
+
 export const TestingAddress = {
   street_address: '123 Street St',
   unit: '4 FL',
