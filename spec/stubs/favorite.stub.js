@@ -1,29 +1,18 @@
 export const validFavoriteForOrder = {
   added: '2017-04-13T05:00:07Z',
   favorite_item_id: 9526,
-  menu_item_id: 12317,
+  menu_item_id: 3956,
   menu_item_json: [
     {
-      id: 12317,
+      id: 3956,
       instructions: 'Extra hot please.',
       made_for: 'John',
       option_groups: [
         {
-          id: 473,
+          id: 63,
           option_items: [
             {
-              id: 9432,
-            },
-          ],
-        },
-        {
-          id: 474,
-          option_items: [
-            {
-              id: 9436,
-            },
-            {
-              id: 17136,
+              id: 7887,
             },
           ],
         },
