@@ -19,9 +19,15 @@ describe('Allergens', () => {
       return Brandibble.customers.authenticate({
         email,
         password,
-      }).then(() => {
+      }).then(response => {
+        let customer = response.data;
         return Brandibble.allergens.all().then(({ data }) => {
           allergens = data;
+          // Ensure testing allergen is removed!
+          if (customer.allergens.includes(allergens[0].name)) {
+            return Brandibble.allergens.remove([allergens[0].name]);
+          }
+          return true;
         });
       });
     });
@@ -52,6 +58,7 @@ describe('Allergens', () => {
           expect(removed).to.equal(allergens[0].name);
         });
       });
+
     });
   });
 });
