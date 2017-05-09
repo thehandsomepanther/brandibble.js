@@ -1,5 +1,6 @@
 /* global Brandibble expect it describe before */
 import { shouldSucceed, TestingUser } from './helpers';
+import includes from 'lodash.includes';
 
 describe('Allergens', () => {
   it('exists', () => expect(Brandibble.allergens).to.exist);
@@ -19,9 +20,15 @@ describe('Allergens', () => {
       return Brandibble.customers.authenticate({
         email,
         password,
-      }).then(() => {
+      }).then(response => {
+        let customer = response.data;
         return Brandibble.allergens.all().then(({ data }) => {
           allergens = data;
+          // Ensure testing allergen is removed!
+          if (includes(customer.allergens, allergens[0].name)) {
+            return Brandibble.allergens.remove([allergens[0].name]);
+          }
+          return true;
         });
       });
     });
@@ -52,6 +59,7 @@ describe('Allergens', () => {
           expect(removed).to.equal(allergens[0].name);
         });
       });
+
     });
   });
 });
