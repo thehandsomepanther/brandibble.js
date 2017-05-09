@@ -1,5 +1,6 @@
 /* global Brandibble expect it describe before */
 import { shouldSucceed, TestingUser } from './helpers';
+import includes from 'lodash.includes';
 
 describe('Allergens', () => {
   it('exists', () => expect(Brandibble.allergens).to.exist);
@@ -24,7 +25,7 @@ describe('Allergens', () => {
         return Brandibble.allergens.all().then(({ data }) => {
           allergens = data;
           // Ensure testing allergen is removed!
-          if (customer.allergens.includes(allergens[0].name)) {
+          if (includes(customer.allergens, allergens[0].name)) {
             return Brandibble.allergens.remove([allergens[0].name]);
           }
           return true;
