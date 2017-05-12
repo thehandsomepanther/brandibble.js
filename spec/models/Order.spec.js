@@ -1,9 +1,21 @@
 /* global Brandibble expect it describe */
 import productJSON from '../stubs/product.stub';
 import locationJSON from '../stubs/location.stub';
+import menuStub from '../stubs/menu.stub';
+import { validFavoriteForOrder } from '../stubs/favorite.stub';
 import { TestingAddress } from '../helpers';
 
 describe('models/order', () => {
+
+  it('wont allow orders to share the misc object memory allocation', () => {
+    const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    const otherNewOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    return newOrder.setPromoCode('yolo').then(() => {
+      expect(newOrder.miscOptions).to.not.equal(otherNewOrder.miscOptions);
+      expect(newOrder.miscOptions.promo_code).to.not.equal(otherNewOrder.miscOptions.promo_code);
+    });
+  });
+
   it('can add a LineItem', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     newOrder.addLineItem(productJSON);
@@ -50,6 +62,14 @@ describe('models/order', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     return newOrder.setLocation(19).then((savedOrder) => {
       expect(savedOrder.locationId).to.equal(19);
+    });
+  });
+
+  it('can push built line item into cart', () => {
+    const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    const lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(validFavoriteForOrder, menuStub);
+    return newOrder.pushLineItem(lineItemFromFavorite).then(() => {
+      expect(newOrder.cart.lineItems).to.include(lineItemFromFavorite);
     });
   });
 
