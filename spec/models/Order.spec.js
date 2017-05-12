@@ -6,6 +6,16 @@ import { validFavoriteForOrder } from '../stubs/favorite.stub';
 import { TestingAddress } from '../helpers';
 
 describe('models/order', () => {
+
+  it('wont allow orders to share the misc object memory allocation', () => {
+    const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    const otherNewOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    return newOrder.setPromoCode('yolo').then(() => {
+      expect(newOrder.miscOptions).to.not.equal(otherNewOrder.miscOptions);
+      expect(newOrder.miscOptions.promo_code).to.not.equal(otherNewOrder.miscOptions.promo_code);
+    });
+  });
+
   it('can add a LineItem', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     newOrder.addLineItem(productJSON);
