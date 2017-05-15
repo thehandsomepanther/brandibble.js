@@ -53,7 +53,7 @@ describe('Customers', () => {
     }).catch((response) => {
       const errors = shouldError(response);
       expect(errors).to.be.a('array').to.have.lengthOf(2);
-      expect(errors[0]).to.have.property('code', 'customers.login.validation');
+      expect(errors[0]).to.have.property('code', 'customers.login.validation.brandibble');
     });
   });
 
