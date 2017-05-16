@@ -52,4 +52,13 @@ describe('Adapter', () => {
       });
     }).catch(error => console.log(error));
   });
+
+  it('can cut off slow requests based on the timeout property', () => {
+    Brandibble.adapter.requestTimeout = 1;
+    return Brandibble.locations.index().catch((err) => {
+      Brandibble.adapter.requestTimeout = 10000;
+      expect(err.message).to.equal('Brandibble.js: The GET request to locations timed out after 1.');
+      return true;
+    });
+  });
 });
