@@ -6,10 +6,13 @@ import { validFavoriteForOrder } from '../stubs/favorite.stub';
 import { TestingAddress } from '../helpers';
 
 describe('models/order', () => {
-
   it('wont allow orders to share the misc object memory allocation', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
-    const otherNewOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    const otherNewOrder = new Brandibble.Order(
+      Brandibble.adapter,
+      locationJSON.location_id,
+      'pickup',
+    );
     return newOrder.setPromoCode('yolo').then(() => {
       expect(newOrder.miscOptions).to.not.equal(otherNewOrder.miscOptions);
       expect(newOrder.miscOptions.promo_code).to.not.equal(otherNewOrder.miscOptions.promo_code);
@@ -33,22 +36,31 @@ describe('models/order', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     return newOrder.addLineItem(productJSON, 1).then((lineItem) => {
       expect(newOrder.getLineItemQuantity(lineItem)).to.equal(1);
-      return newOrder.setLineItemQuantity(lineItem, 3).then(() => {
-        expect(newOrder.getLineItemQuantity(lineItem)).to.equal(3);
-      }).catch((error) => {
-        console.log(error);
-      });
+      return newOrder
+        .setLineItemQuantity(lineItem, 3)
+        .then(() => {
+          expect(newOrder.getLineItemQuantity(lineItem)).to.equal(3);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     });
   });
 
   it('can remove a LineItem', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
-    return newOrder.addLineItem(productJSON).then((lineItem) => {
-      expect(newOrder.cart.lineItems).to.have.lengthOf(1);
-      return newOrder.removeLineItem(lineItem).then(() => {
-        expect(newOrder.cart.lineItems).to.have.lengthOf(0);
-      }).catch(error => console.log(error));
-    }).catch(error => console.log(error));
+    return newOrder
+      .addLineItem(productJSON)
+      .then((lineItem) => {
+        expect(newOrder.cart.lineItems).to.have.lengthOf(1);
+        return newOrder
+          .removeLineItem(lineItem)
+          .then(() => {
+            expect(newOrder.cart.lineItems).to.have.lengthOf(0);
+          })
+          .catch(error => console.log(error));
+      })
+      .catch(error => console.log(error));
   });
 
   it('does not validate when IDs are passed for customers', () => {
@@ -67,7 +79,10 @@ describe('models/order', () => {
 
   it('can push built line item into cart', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
-    const lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(validFavoriteForOrder, menuStub);
+    const lineItemFromFavorite = Brandibble.favorites.buildLineItemOrphan(
+      validFavoriteForOrder,
+      menuStub,
+    );
     return newOrder.pushLineItem(lineItemFromFavorite).then(() => {
       expect(newOrder.cart.lineItems).to.include(lineItemFromFavorite);
     });
@@ -75,7 +90,7 @@ describe('models/order', () => {
 
   it('returns true for valid request at timestamp', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'delivery');
-    const requestedAtTime = `${(new Date()).toISOString().split('.')[0]}Z`;
+    const requestedAtTime = `${new Date().toISOString().split('.')[0]}Z`;
 
     return newOrder.setRequestedAt(requestedAtTime).then(() => {
       expect(newOrder.requestedAt).to.equal(requestedAtTime);
