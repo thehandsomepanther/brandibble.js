@@ -4,6 +4,7 @@ import locationJSON from '../stubs/location.stub';
 import menuStub from '../stubs/menu.stub';
 import { validFavoriteForOrder } from '../stubs/favorite.stub';
 import { TestingAddress } from '../helpers';
+import { PaymentTypes } from '../../lib/utils';
 
 describe('models/order', () => {
   it('wont allow orders to share the misc object memory allocation', () => {
@@ -144,6 +145,13 @@ describe('models/order', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     return newOrder.setAddress(TestingAddress).then(() => {
       expect(newOrder.address).to.deep.equal(TestingAddress);
+    });
+  });
+
+  it('can set payment method to levelup', () => {
+    const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    return newOrder.setPaymentMethod(PaymentTypes.LEVELUP).then(() => {
+      expect(newOrder.paymentType).to.deep.equal(PaymentTypes.LEVELUP);
     });
   });
 });
