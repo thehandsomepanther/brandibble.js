@@ -151,7 +151,6 @@ describe('models/order', () => {
   it('can set payment method to levelup', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     return newOrder.setPaymentMethod(PaymentTypes.LEVELUP).then(() => {
-      debugger;
       expect(newOrder.paymentType).to.deep.equal(PaymentTypes.LEVELUP);
     });
   });
