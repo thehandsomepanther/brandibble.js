@@ -31,6 +31,14 @@ describe('Locations', () => {
     });
   });
 
+  it('can get wait times for a location', () => {
+    const locationId = 19;
+    return Brandibble.locations.waitTimes(locationId).then((response) => {
+      const data = shouldSucceed(response);
+      expect(data).to.be.an('object');
+    });
+  });
+
   it('can show a specific location if passed lat and lng', () => {
     const locationId = 19;
 
