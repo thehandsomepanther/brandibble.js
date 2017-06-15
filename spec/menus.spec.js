@@ -31,10 +31,8 @@ describe('Menus', () => {
       date.setDate(date.getDate() + 1);
       return Brandibble.menus.build(19, 'delivery', date).then((res) => {
         data = shouldSucceed(res);
-        expect(data).to.be.a('object').to.have.property('expires_at');
-        const expirationDate = new Date(data.expires_at).toDateString();
-        expect(expirationDate).to.equal(date.toDateString());
-      }).catch(error => console.log(error.errors[0].code));
+        expect(data).to.be.a('object').to.have.property('daypart');
+      }).catch(console.log);
     });
 
     it('can not build a menu for a location when the service in not enabled', () => {
