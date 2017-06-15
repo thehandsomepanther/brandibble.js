@@ -60,7 +60,7 @@ export async function configureTestingOrder(Brandibble, customer, address, cardO
 
   const serviceType = 'pickup';
   const location = data[0];
-  expect(location.name).to.equal('Columbia');
+  expect(location.name).to.equal('Madison Park');
 
   response = await Brandibble.menus.build(location.location_id, serviceType);
   data = shouldSucceed(response);
