@@ -21,6 +21,9 @@ describe('Adapter', () => {
       Brandibble.adapter.apiKey = UnsecureApiKey;
       expect(error.response).to.present;
       expect(error.exception).to.present;
+      expect(error.message).to.present;
+      // Ensure we don't double catch ourselves
+      expect(error.exception.exception).to.not.present;
     });
   });
 
