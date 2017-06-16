@@ -12,6 +12,19 @@ describe('Adapter', () => {
     expect(headers).to.have.property('Brandibble-Api-Key', UnsecureApiKey);
   });
 
+  it('throws a detailed exception when JSON parsing fails', () => {
+
+    Brandibble.adapter.apiBase = 'http://httpstat.us/';
+    Brandibble.adapter.apiKey = null;
+    return Brandibble.adapter.request('GET', '200/cors').catch((error) => {
+      Brandibble.adapter.apiBase = 'https://staging.brandibble.co/api/v1/brands/6/'
+      Brandibble.adapter.apiKey = UnsecureApiKey;
+      debugger;
+      expect(error.response).to.present;
+      expect(error.exception).to.present;
+    });
+  });
+
   it('can persist currentOrder to localStorage', () => {
     return configureTestingOrder(Brandibble).then((order) => {
       return Brandibble.adapter.persistCurrentOrder(order).then((savedOrder) => {
