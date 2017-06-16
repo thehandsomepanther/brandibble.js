@@ -19,7 +19,6 @@ describe('Adapter', () => {
     return Brandibble.adapter.request('GET', '200/cors').catch((error) => {
       Brandibble.adapter.apiBase = 'https://staging.brandibble.co/api/v1/brands/6/'
       Brandibble.adapter.apiKey = UnsecureApiKey;
-      debugger;
       expect(error.response).to.present;
       expect(error.exception).to.present;
     });
