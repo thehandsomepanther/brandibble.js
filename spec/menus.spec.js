@@ -41,7 +41,7 @@ describe('Menus', () => {
       return Brandibble.menus.build(data[0].location_id, 'delivery').catch((res) => {
         data = shouldError(res);
         expect(data).to.be.a('array');
-        expect(data[0].code).to.equal('orders.validate.service_type_unavailable');
+        expect(data[0].code).to.equal('menus.show.not_found');
       });
     });
   });
