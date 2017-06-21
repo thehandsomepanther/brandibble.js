@@ -39,6 +39,8 @@ describe('Adapter', () => {
 
   it('can restore currentOrder from localStorage', () => {
     return configureTestingOrder(Brandibble).then((order) => {
+      // This is here for testing that this is properly restored... you'd never set it like this in a real app.
+      order.wantsFutureOrder = true;
       return Brandibble.adapter.persistCurrentOrder(order).then(() => {
         return Brandibble.adapter.restoreCurrentOrder().then((retrievedOrder) => {
           expect(order).to.deep.equal(retrievedOrder);
