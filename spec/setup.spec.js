@@ -18,7 +18,7 @@ function ensureCustomerResourcesExist() {
 }
 
 function ensureOrdersTestingUserExists() {
-  return window.Brandibble.customers.create(OrdersTestingUser);
+  return window.Brandibble.customers.create(OrdersTestingUser).catch(f => f);
 }
 
 before(async () => {
@@ -34,6 +34,6 @@ before(async () => {
     window.Brandibble = brandibble;
     return brandibble.customers.create(TestingUser)
       .then(ensureCustomerResourcesExist, ensureCustomerResourcesExist)
-      .then(ensureOrdersTestingUserExists, ensureOrdersTestingUserExists)
+      .then(ensureOrdersTestingUserExists, ensureOrdersTestingUserExists);
   });
 });

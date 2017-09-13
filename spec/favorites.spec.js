@@ -16,11 +16,11 @@ describe('Favorites', () => {
       password,
     }).then(() => {
       return Brandibble.locations.index().then((res) => {
-        let data = shouldSucceed(res);
+        const data = shouldSucceed(res);
         return Brandibble.menus.build(data[0].location_id, 'pickup').then((response) => {
-          let { menu } = shouldSucceed(response);
+          const { menu } = shouldSucceed(response);
           expect(menu).to.be.an('array');
-          let product = menu[0].children[0].items[0];
+          const product = menu[0].children[0].items[0];
           expect(product.name).to.eq('Charred Chicken Marketbowl');
           lineItem = new Brandibble.LineItem(productJSON, 1);
           const bases = lineItem.optionGroups()[0];
