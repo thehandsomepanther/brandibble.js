@@ -677,7 +677,7 @@ export default {
       description: 'Comes with an extra charge',
       id: 76,
       included_options: 0,
-      max_options: 1,
+      max_options: 0,
       menu_position: 4,
       min_options: 0,
       name: 'Add avocado',
