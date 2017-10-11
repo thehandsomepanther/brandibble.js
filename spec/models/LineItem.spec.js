@@ -6,13 +6,15 @@ let bases;
 let lineItem;
 let sauces;
 let sides;
+let addAvocado;
 
 describe('models/lineItem', () => {
   beforeEach(() => {
-    lineItem = new Brandibble.LineItem(productJSON, 1);
-    bases = lineItem.optionGroups()[0];
-    sides = lineItem.optionGroups()[1];
-    sauces = lineItem.optionGroups()[2];
+    lineItem   = new Brandibble.LineItem(productJSON, 1);
+    bases      = lineItem.optionGroups()[0];
+    sides      = lineItem.optionGroups()[1];
+    sauces     = lineItem.optionGroups()[2];
+    addAvocado = lineItem.optionGroups()[3];
   });
 
   it('can add option and increase quantity of option items', () => {
@@ -182,5 +184,35 @@ describe('models/lineItem', () => {
     const expectedPrice = itemsToBeChargedFor * parseFloat(item.price);
 
     expect(parseFloat(sauceGroup.totalEffectOnPrice).toFixed(2)).to.equal(expectedPrice.toFixed(2));
+  });
+
+  it('will generate a pretty uuid for a lineitem', () => {
+    let sluggedLineItem = new Brandibble.LineItem({ id: 1, name: 'Test String', option_groups: [] }, 1);
+    expect(sluggedLineItem.uuid).to.match(/.{6,}-test-string/)
+  });
+
+  it('will respect max_options: 0 as a infinity group', () => {
+    /* NOTE: add avocado has max_options: 0 */
+    const groupIndex = 3;
+
+    /* This group is max_options: 0 */
+    expect(lineItem.operationMaps[groupIndex].canAddMoreToThisGroup).to.equal(true);
+    expect(lineItem.operationMaps[groupIndex].totalAllowedCount).to.equal(0);
+    expect(lineItem.operationMaps[groupIndex].extraOptionsWillIncurCost).to.equal(true);
+
+    addAvocado = lineItem.optionGroups()[groupIndex];
+    let newOption = addAvocado.option_items[0];
+
+    lineItem.addOption(addAvocado, newOption);
+    expect(lineItem.operationMaps[groupIndex].totalEffectOnPrice).to.equal('0.92');
+
+    /* Add an option with zero cost */
+    newOption = addAvocado.option_items[0];
+    lineItem.addOption(addAvocado, newOption);
+    expect(lineItem.operationMaps[groupIndex].totalEffectOnPrice).to.equal('1.84');
+
+    expect(lineItem.operationMaps[groupIndex].canAddMoreToThisGroup).to.equal(true);
+    expect(lineItem.operationMaps[groupIndex].totalAllowedCount).to.equal(0);
+    expect(lineItem.operationMaps[groupIndex].extraOptionsWillIncurCost).to.equal(true);
   });
 });
