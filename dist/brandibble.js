@@ -630,6 +630,7 @@ var LineItem = function () {
     this.instructions = '';
     this.operationMaps = [];
 
+    if (!uuid) this._applyDefaultConfiguration();
     this._generateOperationMaps();
   }
 
@@ -767,12 +768,30 @@ var LineItem = function () {
       };
     }
   }, {
-    key: '_generateOperationMaps',
-    value: function _generateOperationMaps() {
+    key: '_applyDefaultConfiguration',
+    value: function _applyDefaultConfiguration() {
       var _this2 = this;
 
+      (this.product.option_groups || []).forEach(function (og) {
+        og.option_items.forEach(function (oi) {
+          // If opt_is_default is 1, add it as an option!
+          if (oi.opt_is_default) {
+            // This should never fail, but if it does it's not a deal breaker.
+            try {
+              _this2.addOption(og, oi);
+            } catch (e) {}
+          }
+        });
+      });
+      return this.configuration;
+    }
+  }, {
+    key: '_generateOperationMaps',
+    value: function _generateOperationMaps() {
+      var _this3 = this;
+
       var maps = (0, _lodash10.default)((0, _lodash6.default)(this.optionGroups(), function (optionGroup) {
-        var configGroup = _this2.configurationForGroup(optionGroup.id);
+        var configGroup = _this3.configurationForGroup(optionGroup.id);
         var currentlySelectedCount = configGroup ? configGroup.optionItems.length : 0;
         var canAddMoreToThisGroup = optionGroup.max_options === 0 || currentlySelectedCount < optionGroup.max_options;
         var requiresMoreInThisGroup = currentlySelectedCount < optionGroup.min_options;
