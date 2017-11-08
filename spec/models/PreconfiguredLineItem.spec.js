@@ -2,11 +2,7 @@
 /* eslint no-new:1 */
 import preconfiguredProductJSON from '../stubs/productWithDefaults.stub';
 
-let bases;
 let lineItem;
-let sauces;
-let sides;
-let addAvocado;
 
 describe('models/lineItem', () => {
   beforeEach(() => {
