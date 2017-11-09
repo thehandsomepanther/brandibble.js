@@ -20,6 +20,14 @@ describe('models/order', () => {
     });
   });
 
+  it('can set miscOptions on an order', () => {
+    const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
+    const opts = { notes_for_store: 'Can i get some food?' };
+    return newOrder.setMiscOptions(opts).then(() => {
+      expect(newOrder.miscOptions.notes_for_store).to.equal(opts.notes_for_store);
+    });
+  });
+
   it('can flag a wantsFutureOrder', () => {
     const newOrder = new Brandibble.Order(Brandibble.adapter, locationJSON.location_id, 'pickup');
     newOrder.setRequestedAt('2017-06-21T16:09:49Z', true);
