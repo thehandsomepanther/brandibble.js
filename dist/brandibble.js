@@ -9381,6 +9381,11 @@ var Customers = function () {
     value: function currentLevelUpLoyalty() {
       return this.levelUpLoyalty(this.adapter.customerId());
     }
+  }, {
+    key: 'currentLevelUpCampaign',
+    value: function currentLevelUpCampaign() {
+      return this.levelUpCampaign(this.adapter.customerId());
+    }
 
     // STATELESS METHODS
 
@@ -9485,6 +9490,14 @@ var Customers = function () {
       var data = { email: email };
       if (password) data.password = password;
       return this.adapter.request('POST', 'customers/' + customerId + '/levelup', data);
+    }
+
+    /* show levelup campaign */
+
+  }, {
+    key: 'levelUpCampaign',
+    value: function levelUpCampaign(customerId) {
+      return this.adapter.request('GET', 'customers/' + customerId + '/levelup/campaign');
     }
 
     /* disconnect level up account */

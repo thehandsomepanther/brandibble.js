@@ -185,4 +185,21 @@ describe('Customers', () => {
     const orders = await shouldSucceed(data);
     expect(orders).to.be.array;
   });
+
+  /* Campaign Loyalty must be setup in the Brandibble levelup integration panel
+   * for this to work, and given our test case here isn't setup, we're just testing
+   * the failure case for now.
+   */
+  it('can retrieve levelup campaign info for a user', async function () {
+    return Brandibble.customers.authenticate({
+      email: 'sanctuary-testing-customer@example.com',
+      password: 'password',
+    }).then(() => {
+      return Brandibble.customers.currentLevelUpCampaign().catch((response) => {
+        const errors = shouldError(response);
+        expect(errors).to.have.lengthOf(1);
+        expect(errors[0]).to.have.property('code', 'customers.levelup.campaign.show.missing_token');
+      });
+    });
+  });
 });
