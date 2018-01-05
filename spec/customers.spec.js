@@ -195,10 +195,10 @@ describe('Customers', () => {
       email: 'sanctuary-testing-customer@example.com',
       password: 'password',
     }).then(() => {
-      return Brandibble.customers.currentLevelUpCampaign().catch((response) => {
+      return Brandibble.customers.currentLevelUpCampaign(1, 'basic_v1').catch((response) => {
         const errors = shouldError(response);
         expect(errors).to.have.lengthOf(1);
-        expect(errors[0]).to.have.property('code', 'customers.levelup.campaign.show.missing_token');
+        expect(errors[0]).to.have.property('code', 'customers.levelup.campaigns.show.missing_token');
       });
     });
   });

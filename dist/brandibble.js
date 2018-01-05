@@ -9383,8 +9383,8 @@ var Customers = function () {
     }
   }, {
     key: 'currentLevelUpCampaign',
-    value: function currentLevelUpCampaign() {
-      return this.levelUpCampaign(this.adapter.customerId());
+    value: function currentLevelUpCampaign(campaignId, campaignType) {
+      return this.levelUpCampaign(this.adapter.customerId(), campaignId, campaignType);
     }
 
     // STATELESS METHODS
@@ -9496,8 +9496,8 @@ var Customers = function () {
 
   }, {
     key: 'levelUpCampaign',
-    value: function levelUpCampaign(customerId) {
-      return this.adapter.request('GET', 'customers/' + customerId + '/levelup/campaign');
+    value: function levelUpCampaign(customerId, campaignId, campaignType) {
+      return this.adapter.request('GET', 'customers/' + customerId + '/levelup/campaigns/' + campaignId + '/' + campaignType);
     }
 
     /* disconnect level up account */
