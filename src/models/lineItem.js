@@ -6,7 +6,7 @@ import sortBy from 'lodash.sortby';
 import reverse from 'lodash.reverse';
 import reduce from 'lodash.reduce';
 import validate from 'validate.js';
-import { productValidations } from './/validations';
+import { productValidations } from './validations';
 import { generateUUID } from '../utils';
 
 const OptionOperations = {
