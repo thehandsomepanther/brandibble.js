@@ -1,4 +1,4 @@
-import { queryStringBuilder } from 'brandibble/utils';
+import { queryStringBuilder } from './utils';
 
 const isArray = obj => (Object.prototype.toString.call(obj) === '[object Array]');
 

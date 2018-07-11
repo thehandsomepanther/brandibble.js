@@ -1,5 +1,5 @@
 import find from 'lodash.find';
-import LineItem from 'brandibble/models/lineItem';
+import LineItem from './models/lineItem';
 
 export default class Favorites {
   constructor(adapter) {

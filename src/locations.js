@@ -1,4 +1,4 @@
-import { queryStringBuilder } from 'brandibble/utils';
+import { queryStringBuilder } from './utils';
 
 export default class Locations {
   constructor(adapter) {

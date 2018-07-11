@@ -1,18 +1,18 @@
-import Adapter from 'brandibble/adapter';
-import Events from 'brandibble/events';
-import Customers from 'brandibble/customers';
-import Locations from 'brandibble/locations';
-import Addresses from 'brandibble/addresses';
-import Menus from 'brandibble/menus';
-import Orders from 'brandibble/orders';
-import Payments from 'brandibble/payments';
-import Allergens from 'brandibble/allergens';
-import Favorites from 'brandibble/favorites';
-import Ratings from 'brandibble/ratings';
-import Images from 'brandibble/images';
+import Adapter from './adapter';
+import Events from './events';
+import Customers from './customers';
+import Locations from './locations';
+import Addresses from './addresses';
+import Menus from './menus';
+import Orders from './orders';
+import Payments from './payments';
+import Allergens from './allergens';
+import Favorites from './favorites';
+import Ratings from './ratings';
+import Images from './images';
 
-import Order from 'brandibble/models/order';
-import LineItem from 'brandibble/models/lineItem';
+import Order from './models/order';
+import LineItem from './models/lineItem';
 
 import { applyPollyfills, TestCreditCards } from './utils';
 

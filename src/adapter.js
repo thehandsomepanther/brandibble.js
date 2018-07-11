@@ -1,5 +1,5 @@
 /* global atob fetch */
-import Order from 'brandibble/models/order';
+import Order from './models/order';
 import CircularJSON from 'circular-json';
 
 function BrandibbleRequestException(message, response, exception, extracted) {

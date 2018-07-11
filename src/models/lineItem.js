@@ -6,8 +6,8 @@ import sortBy from 'lodash.sortby';
 import reverse from 'lodash.reverse';
 import reduce from 'lodash.reduce';
 import validate from 'validate.js';
-import { productValidations } from 'brandibble/models/validations';
-import { generateUUID } from 'brandibble/utils';
+import { productValidations } from './/validations';
+import { generateUUID } from '../utils';
 
 const OptionOperations = {
   ADD: 'ADD',

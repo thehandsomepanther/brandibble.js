@@ -1,12 +1,12 @@
-import Cart from 'brandibble/models/cart';
-import LineItem from 'brandibble/models/lineItem';
 import validate from 'validate.js';
-import { PaymentTypes, ISO8601_PATTERN, generateUUID } from 'brandibble/utils';
+import Cart from './cart';
+import LineItem from './lineItem';
+import { PaymentTypes, ISO8601_PATTERN, generateUUID } from '../utils';
 import {
   customerValidations,
   addressValidations,
   cardValidations,
-} from 'brandibble/models/validations';
+} from './validations';
 
 
 const defaultOptions = {

@@ -2,7 +2,7 @@ import every from 'lodash.every';
 import find from 'lodash.find';
 import map from 'lodash.map';
 import reject from 'lodash.reject';
-import LineItem from 'brandibble/models/lineItem';
+import LineItem from './lineItem';
 
 export default class Cart {
   constructor() {

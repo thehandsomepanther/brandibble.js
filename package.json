@@ -7,8 +7,9 @@
     "node": ">=7.6.0",
     "npm": ">=4.3.0"
   },
-  "main": "dist/brandibble.js",
+  "main": "lib/brandibble.js",
   "scripts": {
+    "prepublish": "babel src --out-dir lib",
     "build": "webpack",
     "prepare": "npm run build",
     "test": "node ./node_modules/karma/bin/karma start"
@@ -16,6 +17,7 @@
   "author": "Hugh Francis <me@hughfrancis.me> (http://hughfrancis.me/)",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.9.1",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.4",

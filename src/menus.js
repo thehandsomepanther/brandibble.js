@@ -1,5 +1,5 @@
 import validate from 'validate.js';
-import { ISO8601_PATTERN } from 'brandibble/utils';
+import { ISO8601_PATTERN } from './utils';
 
 export default class Menus {
   constructor(adapter) {

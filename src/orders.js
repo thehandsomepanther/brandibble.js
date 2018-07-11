@@ -1,6 +1,6 @@
-import Order from 'brandibble/models/order';
+import Order from './models/order';
+import LineItem from './models/lineItem';
 import find from 'lodash.find';
-import LineItem from 'brandibble/models/lineItem';
 import _ from 'lodash';
 
 export default class Orders {
