@@ -1,6 +1,6 @@
 /* global atob fetch */
-import Order from './models/order';
 import CircularJSON from 'circular-json';
+import Order from './models/order';
 
 function BrandibbleRequestException(message, response, exception, extracted) {
   this.message = `Brandibble.js: ${message || 'An unknown exception was triggered.'}`;

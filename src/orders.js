@@ -1,7 +1,7 @@
+import find from 'lodash.find';
+import reduce from 'lodash.reduce';
 import Order from './models/order';
 import LineItem from './models/lineItem';
-import find from 'lodash.find';
-import _ from 'lodash';
 
 export default class Orders {
   constructor(adapter, events) {
@@ -23,7 +23,7 @@ export default class Orders {
   }
 
   static buildLineItemOrphan(item, menuJSON) {
-    const sections = _.reduce((menuJSON || []), (combined, section) => {
+    const sections = reduce((menuJSON || []), (combined, section) => {
       return [...combined, ...section.children, ...section.items];
     }, []);
 
