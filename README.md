@@ -1,6 +1,6 @@
 # Brandibble.JS
 [![npm](https://img.shields.io/npm/v/brandibble.svg?style=flat-square)](https://www.npmjs.com/package/brandibble)
-[![CircleCI Status](https://img.shields.io/circleci/project/github/sanctuarycomputer/brandibble.js/master.svg?label=circle&maxAge=43200&style=flat-square)](https://circleci.com/gh/sanctuarycomputer/brandibble.js)
+[![CircleCI Status](https://img.shields.io/circleci/project/github/BetterBOH/brandibble.js/master.svg?label=circle&maxAge=43200&style=flat-square)](https://circleci.com/gh/BetterBOH/brandibble.js)
 [![Open Source Love](https://img.shields.io/npm/l/brandibble.svg?style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)
 
 

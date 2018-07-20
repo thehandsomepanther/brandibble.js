@@ -25,7 +25,8 @@ describe('Orders', () => {
     };
 
     const testingOrder = await configureTestingOrder(Brandibble, customer, address, card);
-    response = await Brandibble.orders.submit(testingOrder).catch(console.log);
+
+    response = await Brandibble.orders.submit(testingOrder);
 
     const data = shouldSucceed(response);
     expect(data).to.be.a('object');
