@@ -1,4 +1,4 @@
-/* global Brandibble expect it describe before window */
+/* global Brandibble expect it describe before */
 import { shouldSucceed, TestingUser, configureTestingOrder } from './helpers';
 
 const TEST_RATING = 3;

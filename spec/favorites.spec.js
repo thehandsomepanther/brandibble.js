@@ -1,5 +1,6 @@
 /* global Brandibble expect it describe before */
 /* eslint no-shadow: 1 */
+import find from 'lodash.find';
 import productJSON from './stubs/product.stub';
 import menuStub from './stubs/menu.stub';
 import { validFavoriteForOrder, invalidFavoriteForOrder } from './stubs/favorite.stub';
@@ -20,8 +21,12 @@ describe('Favorites', () => {
         return Brandibble.menus.build(data[0].location_id, 'pickup').then((response) => {
           const { menu } = shouldSucceed(response);
           expect(menu).to.be.an('array');
-          const product = menu[0].children[0].items[0];
+
+          const market = find(menu, item => item.name === 'The Market');
+          const marketBowls = find(market.children, item => item.name === 'Marketbowls');
+          const product = find(marketBowls.items, item => item.name === 'Charred Chicken Marketbowl');
           expect(product.name).to.eq('Charred Chicken Marketbowl');
+
           lineItem = new Brandibble.LineItem(productJSON, 1);
           const bases = lineItem.optionGroups()[0];
           const sides = lineItem.optionGroups()[1];

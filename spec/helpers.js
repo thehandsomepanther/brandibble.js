@@ -1,4 +1,6 @@
 /* global expect */
+import find from 'lodash.find';
+import includes from 'lodash.includes';
 import { PaymentTypes } from '../lib/utils';
 
 export const TestingUser = {
@@ -67,9 +69,17 @@ export async function configureTestingOrder(Brandibble, customer, address, cardO
   expect(data).to.be.a('object');
   expect(data.menu).to.be.a('array');
 
-
   const newOrder = await Brandibble.orders.create(location.location_id, serviceType);
-  const product = data.menu[0].children[0].items[0];
+
+  const market = find(data.menu, item => item.name === 'The Market');
+  const marketBowls = find(market.children, item => item.name === 'Marketbowls');
+  const product = find(marketBowls.items, item => item.name === 'Charred Chicken Marketbowl');
+
+  const soldOutItemIDs = data.sold_out_items;
+  if (includes(soldOutItemIDs, product.id)) {
+    throw new Error('BrandibbleBackendConfig: Charred Chicken Marketbowl is Sold Out, tests can not run.');
+  }
+
   const lineItem = await newOrder.addLineItem(product, 1);
 
   expect(lineItem.product.name).to.equal('Charred Chicken Marketbowl');
@@ -79,10 +89,15 @@ export async function configureTestingOrder(Brandibble, customer, address, cardO
   const bases = lineItem.optionGroups()[0];
   const sides = lineItem.optionGroups()[1];
 
+  /* Load Available Sides & Bases */
+  const firstAvailableBase = find(bases.option_items, item => !includes(soldOutItemIDs, item.id));
+  const firstAvailableSide = find(sides.option_items, item => !includes(soldOutItemIDs, item.id));
+  const secondAvailableSide = find(sides.option_items, item => !includes(soldOutItemIDs, item.id) && item.id !== firstAvailableSide.id);
+
   await Promise.all([
-    newOrder.addOptionToLineItem(lineItem, bases, bases.option_items[0]),
-    newOrder.addOptionToLineItem(lineItem, sides, sides.option_items[0]),
-    newOrder.addOptionToLineItem(lineItem, sides, sides.option_items[1]),
+    newOrder.addOptionToLineItem(lineItem, bases, firstAvailableBase),
+    newOrder.addOptionToLineItem(lineItem, sides, firstAvailableSide),
+    newOrder.addOptionToLineItem(lineItem, sides, secondAvailableSide),
   ]);
 
   expect(lineItem.isValid()).to.equal(true);
