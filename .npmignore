@@ -1,5 +1,7 @@
 node_modules/
 spec/
+dist/
+lib/
 .babelrc
 .eslintrc
 circle.yml
