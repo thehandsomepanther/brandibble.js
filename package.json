@@ -1,6 +1,6 @@
 {
   "name": "brandibble",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "description": "API Wrapper for Brandibble.co",
   "private": false,
   "repository": "https://github.com/thehandsomepanther/brandibble.js",
