@@ -1,8 +1,9 @@
 {
-  "name": "brandibble",
+  "name": "@thehandsomepanther/brandibble",
   "version": "1.14.2",
   "description": "API Wrapper for Brandibble.co",
-  "repository": "https://github.com/sanctuarycomputer/brandibble.js",
+  "private": false,
+  "repository": "https://github.com/thehandsomepanther/brandibble.js",
   "engines": {
     "node": ">=7.6.0",
     "npm": ">=4.3.0"
