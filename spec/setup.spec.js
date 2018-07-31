@@ -1,6 +1,6 @@
 /* global window before */
 import localforage from 'localforage';
-import Brandibble from '..';
+import Brandibble from '../src/brandibble';
 import { shouldSucceed, TestingUser, OrdersTestingUser, TestingAddress, UnsecureApiKey } from './helpers';
 
 const { email, password } = TestingUser;

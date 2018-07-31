@@ -2,7 +2,7 @@
 
 import find from 'lodash.find';
 import includes from 'lodash.includes';
-import { PaymentTypes } from '../lib/utils';
+import { PaymentTypes } from '../src/utils';
 
 export const TestingUser = {
   first_name: 'Sanctuary',
