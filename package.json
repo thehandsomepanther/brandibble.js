@@ -1,5 +1,5 @@
 {
-  "name": "@thehandsomepanther/brandibble",
+  "name": "brandibble",
   "version": "1.14.2",
   "description": "API Wrapper for Brandibble.co",
   "private": false,
