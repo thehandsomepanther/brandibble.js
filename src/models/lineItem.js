@@ -6,7 +6,7 @@ import sortBy from 'lodash.sortby';
 import reverse from 'lodash.reverse';
 import reduce from 'lodash.reduce';
 import validate from 'validate.js';
-import { productValidations } from './validations';
+import { validateProduct } from './validations';
 import { generateUUID } from '../utils';
 
 const OptionOperations = {
@@ -21,7 +21,7 @@ const OptionStatus = {
 
 export default class LineItem {
   constructor(product, quantity = 1, uuid) {
-    const result = validate(product, productValidations);
+    const result = validateProduct(product);
     if (result) throw result;
 
     /* Allow uuid incase we want to rehyrate this lineItem. */

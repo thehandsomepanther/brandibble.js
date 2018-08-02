@@ -3,9 +3,9 @@ import Cart from './cart';
 import LineItem from './lineItem';
 import { PaymentTypes, ISO8601_PATTERN, generateUUID } from '../utils';
 import {
-  customerValidations,
-  addressValidations,
-  cardValidations,
+  validateCustomer,
+  validateAddress,
+  validateCard,
 } from './validations';
 
 
@@ -87,7 +87,7 @@ export default class Order {
       this.customer = { customer_id };
       return this.adapter.persistCurrentOrder(this);
     }
-    const result = validate(customer, customerValidations);
+    const result = validateCustomer(customer);
     if (!result) {
       this.customer = customer;
       return this.adapter.persistCurrentOrder(this);
@@ -130,7 +130,7 @@ export default class Order {
             return this.adapter.persistCurrentOrder(this);
           }
           /* The user is trying to set a non-persisted card on the order */
-          const result = validate(cardOrCashTip, cardValidations);
+          const result = validateCard(cardOrCashTip);
           if (!result) {
             this.creditCard = cardOrCashTip;
             /* Important! Don't persist raw card info to LocalStorage */
@@ -155,7 +155,7 @@ export default class Order {
       this.address = { customer_address_id };
       return this.adapter.persistCurrentOrder(this);
     }
-    const result = validate(address, addressValidations);
+    const result = validateAddress(address);
     if (!result) {
       this.address = address;
       return this.adapter.persistCurrentOrder(this);

@@ -1,3 +1,5 @@
+import validate from 'validate.js';
+
 export const cardValidations = {
   cc_number: {
     presence: true,
@@ -17,6 +19,7 @@ export const cardValidations = {
     length: { is: 4 },
   },
 };
+export const validateCard = card => validate(card, cardValidations);
 
 export const customerValidations = {
   email: {
@@ -32,7 +35,11 @@ export const customerValidations = {
   last_name: {
     presence: true,
   },
+  phone: {
+    format: /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
+  },
 };
+export const validateCustomer = customer => validate(customer, customerValidations);
 
 export const addressValidations = {
   street_address: {
@@ -66,6 +73,7 @@ export const addressValidations = {
   contact_name: {},
   contact_phone: {},
 };
+export const validateAddress = address => validate(address, addressValidations);
 
 export const productValidations = {
   id: {
@@ -76,3 +84,4 @@ export const productValidations = {
     isArray: true,
   },
 };
+export const validateProduct = product => validate(product, productValidations);
