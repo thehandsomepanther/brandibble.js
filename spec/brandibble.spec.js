@@ -20,4 +20,18 @@ describe('Brandibble', () => {
       }).then(response => expect(response).to.exist);
     });
   });
+
+  describe('reset', () => {
+    it('flushes the adapter and re-initializes stateful properties', () => {
+      const oldEvents = Brandibble.events;
+      const oldCustomers = Brandibble.customers;
+      const oldOrders = Brandibble.orders;
+      return Brandibble.reset().then(() => {
+        expect(Brandibble.adapter.currentOrder).to.be.null;
+        expect(Object.is(oldEvents, Brandibble.events)).to.be.false;
+        expect(Object.is(oldCustomers, Brandibble.customers)).to.be.false;
+        expect(Object.is(oldOrders, Brandibble.orders)).to.be.false;
+      });
+    });
+  });
 });
