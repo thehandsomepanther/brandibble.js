@@ -3,6 +3,7 @@ import Cart from './cart';
 import LineItem from './lineItem';
 import { PaymentTypes, ISO8601_PATTERN, generateUUID } from '../utils';
 import {
+  customerValidations,
   validateCustomer,
   validateAddress,
   validateCard,
@@ -238,12 +239,11 @@ export default class Order {
   formatCustomer() {
     if (!this.customer) { return {}; }
     if (this.customer.customer_id) { return { customer_id: this.customer.customer_id }; }
-    return {
-      email: this.customer.email,
-      password: this.customer.password,
-      first_name: this.customer.first_name,
-      last_name: this.customer.last_name,
-    };
+    return Object.keys(customerValidations)
+      .reduce((acc, curr) => ({
+        ...acc,
+        [curr]: this.customer[curr],
+      }), {});
   }
 
   formatAddress() {

@@ -145,9 +145,10 @@ describe('models/order', () => {
       last_name: 'Francis',
       email: 'hugh@hugh.co',
       password: 'pizzapasta',
+      phone: '5125324352',
     };
     return newOrder.setCustomer(customer).then(() => {
-      expect(newOrder.customer).to.have.keys(['first_name', 'last_name', 'password', 'email']);
+      expect(newOrder.customer).to.have.keys(['first_name', 'last_name', 'password', 'email', 'phone']);
     });
   });
 
