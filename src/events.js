@@ -20,4 +20,8 @@ export default class Events {
   subscribe(callback) {
     this._callStack.push(callback);
   }
+
+  reset() {
+    this._callStack = [];
+  }
 }

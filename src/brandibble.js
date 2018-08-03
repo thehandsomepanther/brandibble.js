@@ -70,9 +70,7 @@ export default class Brandibble {
 
   reset() {
     return this.adapter.flushAll().then(() => {
-      this.events = new Events();
-      this.customers = new Customers(this.adapter, this.events);
-      this.orders = new Orders(this.adapter, this.events);
+      this.events.reset();
     });
   }
 
