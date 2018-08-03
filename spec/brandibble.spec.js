@@ -20,4 +20,13 @@ describe('Brandibble', () => {
       }).then(response => expect(response).to.exist);
     });
   });
+
+  describe('reset', () => {
+    it('flushes the adapter and re-initializes stateful properties', () => {
+      return Brandibble.reset().then(() => {
+        expect(Brandibble.adapter.currentOrder).to.be.null;
+        expect(Brandibble.events._callStack).to.be.empty;
+      });
+    });
+  });
 });
