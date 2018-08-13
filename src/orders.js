@@ -33,13 +33,34 @@ export default class Orders {
     const lineItem = new LineItem(product);
 
     try {
-      (item.option_groups || []).forEach((iog) => {
-        const optionGroup = find(product.option_groups, og => og.id === iog.id);
-        if (!optionGroup) throw new Error({ message: 'Option Group Missing' });
-        iog.option_items.forEach((foi) => {
-          const optionItem = find(optionGroup.option_items, oi => oi.id === foi.id);
-          if (!optionItem) throw new Error({ message: 'Option Item Missing' });
-          lineItem.addOption(optionGroup, optionItem);
+      (item.option_groups || []).forEach((itemOptionGroup) => {
+        const productOptionGroup = find(
+          product.option_groups,
+          og => og.id === itemOptionGroup.id,
+        );
+        if (!productOptionGroup) throw new Error({ message: 'Option Group Missing' });
+
+        itemOptionGroup.option_items.forEach((foi) => {
+          const productOptionItem = find(
+            productOptionGroup.option_items,
+            oi => oi.id === foi.id,
+          );
+          if (!productOptionItem) throw new Error({ message: 'Option Item Missing' });
+
+          const lineItemOptionGroup = find(
+            lineItem.configuration,
+            config => config.optionGroupId === productOptionGroup.id,
+          );
+
+          // we only want to add this option to the line item if it isn't already present.
+          // even though we've constructed a new LineItem above, its configuration
+          // property could be populated if it has any default options
+          if (
+            !lineItemOptionGroup ||
+            !find(lineItemOptionGroup.optionItems, i => i.id === productOptionItem.id)
+          ) {
+            lineItem.addOption(productOptionGroup, productOptionItem);
+          }
         });
       });
     } catch (e) {
