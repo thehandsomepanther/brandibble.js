@@ -95,6 +95,13 @@ describe('Customers', () => {
     expect(response).to.be.true;
   });
 
+  it('can trigger a customer\'s update password flow', async () => {
+    const response = await Brandibble.customers.updatePassword('123141254jlasdfjwqer', {
+      password: 'newpassword',
+    });
+    expect(response).to.be.true;
+  });
+
   it('can not show a customer that does not belong to the current token', () => {
     return Brandibble.customers.authenticate({
       email: 'sanctuary-testing-customer@example.com',
