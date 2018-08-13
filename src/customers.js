@@ -85,6 +85,12 @@ export default class Customers {
     return promise;
   }
 
+  updatePassword(token, body) {
+    const promise = this.adapter.request('POST', `customers/reset/${token}`, body);
+    this.events.triggerAsync('customers.updatePassword', promise);
+    return promise;
+  }
+
   // LEVELUP
 
   /* customer_id, code, color, tip_amount, tip_percent, width */
